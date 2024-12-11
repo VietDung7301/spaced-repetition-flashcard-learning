@@ -6,15 +6,7 @@ export default defineNuxtConfig({
     '/': { prerender: true },
   },
   modules: ['@nuxt/ui'],
-  nitro: {
-    experimental: {
-      database: true
-    },
-    database: {
-      default: {
-        connector: 'postgresql',
-        url: 'postgresql://username:password@hostname:port/database_name'
-      }
-    }
+  runtimeConfig: {
+    DB_URL: process.env.DB_URL
   }
 });

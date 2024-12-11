@@ -46,3 +46,6 @@ npm run preview
 ```
 
 Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/deployment#presets) for more information.
+
+After make any change to database's schema, run this command to apply
+    npx drizzle-kit push
