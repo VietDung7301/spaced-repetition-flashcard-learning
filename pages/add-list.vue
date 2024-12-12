@@ -1,6 +1,6 @@
 <script setup lang="ts">
     const submit = () => {
-        $fetch("/api/add_list", {
+        $fetch("/api/list", {
             method: "POST",
             body: {
                 name: "test",

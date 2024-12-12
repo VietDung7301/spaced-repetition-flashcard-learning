@@ -5,7 +5,7 @@ export const usersTable = pgTable("users", {
     name: varchar({ length: 255 }).notNull(),
 })
 
-export const listsTable = pgTable("card_lists", {
+export const cardSetsTable = pgTable("card_lists", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     user_id: integer().references(() => usersTable.id),
     name: varchar({ length: 255 }).notNull()
@@ -17,5 +17,5 @@ export const cardsTable = pgTable("cards", {
     pronunciation: varchar({ length: 255 }),
     meaning: varchar({ length: 255 }).notNull(),
     example: varchar({ length: 255 }),
-    list_id: integer().references(() => listsTable.id)
+    set_id: integer().references(() => cardSetsTable.id)
 })

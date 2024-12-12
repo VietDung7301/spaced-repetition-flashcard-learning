@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/neon-http';
-import { listsTable } from '../db/schema';
+import { cardSetsTable } from '../../db/schema';
 
 const db = drizzle(useRuntimeConfig().DB_URL);
 
@@ -9,10 +9,10 @@ export default defineEventHandler( async(event) =>{
 
     const {name, user_id} = {...requestBody}
 
-    const list: typeof listsTable.$inferInsert = {
+    const list: typeof cardSetsTable.$inferInsert = {
         name: name,
         user_id: user_id
     }
 
-    await db.insert(listsTable).values(list)
+    await db.insert(cardSetsTable).values(list)
 })
