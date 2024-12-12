@@ -1,12 +1,6 @@
 <script setup lang="ts">
 
-const links = [{
-  label: 'Profile',
-  avatar: {
-    src: 'https://avatars.githubusercontent.com/u/739984?v=4'
-  },
-  badge: 100
-}, {
+const links = [[{
   label: 'Installation',
   icon: 'i-heroicons-home',
   to: '/'
@@ -18,7 +12,16 @@ const links = [{
   label: 'Command Palette',
   icon: 'i-heroicons-command-line',
   to: '/'
+}],
+[{
+  label: 'Profile',
+  avatar: {
+    src: 'https://avatars.githubusercontent.com/u/739984?v=4'
+  },
+  badge: 100
 }]
+
+]
 </script>
 
 <template>
