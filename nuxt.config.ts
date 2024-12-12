@@ -5,8 +5,7 @@ export default defineNuxtConfig({
     // prerender index route by default
     '/': { prerender: true },
   },
-  modules: ['@nuxt/ui'],
-  components: [{path: '~/components'}],
+  modules: ['@nuxt/ui', '@pinia/nuxt'],
   runtimeConfig: {
     DB_URL: process.env.DB_URL
   }

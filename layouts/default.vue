@@ -1,23 +1,27 @@
 <script setup lang="ts">
-const links = [{
+
+const links = [[{
+  label: 'Installation',
+  icon: 'i-heroicons-home',
+  to: '/'
+}, {
+  label: 'Horizontal Navigation',
+  icon: 'i-heroicons-chart-bar',
+  to: '/'
+}, {
+  label: 'Command Palette',
+  icon: 'i-heroicons-command-line',
+  to: '/'
+}],
+[{
   label: 'Profile',
   avatar: {
     src: 'https://avatars.githubusercontent.com/u/739984?v=4'
   },
   badge: 100
-}, {
-  label: 'Installation',
-  icon: 'i-heroicons-home',
-  to: '/getting-started/installation'
-}, {
-  label: 'Horizontal Navigation',
-  icon: 'i-heroicons-chart-bar',
-  to: '/components/horizontal-navigation'
-}, {
-  label: 'Command Palette',
-  icon: 'i-heroicons-command-line',
-  to: '/components/command-palette'
 }]
+
+]
 </script>
 
 <template>
