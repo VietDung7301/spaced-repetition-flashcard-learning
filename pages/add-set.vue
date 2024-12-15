@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { object, string, nonempty, type Infer } from 'superstruct'
 import type { FormSubmitEvent } from '#ui/types'
-
+const toast = useToast()
 const { user_id } = storeToRefs(useAuthStore());
 
 const schema = object({
@@ -21,7 +21,9 @@ const onSubmit = (event: FormSubmitEvent<Schema>) => {
 			name: event.data.name,
 			user_id: user_id.value
 		}
-	})
+	}).finally( () => 
+		toast.add({title: "Add new list success"})
+	)
 }
 </script>
 

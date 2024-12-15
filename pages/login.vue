@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { User } from '~/types/user';
+import type { User } from '~/types/type';
 
 const { logIn } = useAuthStore()
 const handleOnLogin = (user:User) => {
@@ -16,21 +16,23 @@ const userList = [
 	}, {
 		id: 2,
 		name: "Trammmmmm",
-		imageURL: "/dung.png",
+		imageURL: "/tram.jpg",
 		email: ""
 	}
 ]
 </script>
 
 <template>
-<div class="flex justify-center">
-	<div class="w-3/5 flex flex-row  space-x-8">
+<div class="flex justify-center pt-5">
+	<div class="w-3/5 flex flex-row space-x-8 max-sm:w-11/12 max-sm:space-x-2">
 		<div v-for="user in userList" class="basis-1/2">
 			<UCard class="flex flex-col justify-center">
 				<template #header>
 					<div class="font-bold text-xl justify-center flex">{{ user.name }}</div>
 				</template>
-				<img class="w-full" :src=user.imageURL :alt=user.name>
+				<div class="h-96 overflow-hidden max-sm:h-32">
+					<img class="min-w-full min-h-full object-contain" :src=user.imageURL :alt=user.name>
+				</div>
 				<template #footer>
 					<div class="font-bold text-xl mb-2 justify-center flex">
 						<UButton @click="handleOnLogin(user)">Login</UButton>

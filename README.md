@@ -49,3 +49,5 @@ Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/de
 
 After make any change to database's schema, run this command to apply
     npx drizzle-kit push
+
+Icon is in [https://icones.js.org/](https://icones.js.org/)
