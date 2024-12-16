@@ -13,6 +13,10 @@ const links = [[{
   label: 'Add new word',
   icon: 'i-material-symbols:add-circle-outline',
   to: '/add-word'
+}, {
+  label: "Review",
+  icon: "i-hugeicons:online-learning-01",
+  to: "/review"
 }],
 [{
   label: username,

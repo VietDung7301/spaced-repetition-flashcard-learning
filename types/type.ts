@@ -24,10 +24,14 @@ export interface Card {
     next_study_time: Date;
 }
 
+export interface QuestionOption {
+    word: string;
+    meaning: string;
+    pronunciation: string | null;
+    bg_color: string | null;
+    isCorrect: boolean;
+}
+
 export interface CardQuestion extends Card {
-    questions: {
-        word: string;
-        meaning: string;
-        pronunciation: string;
-    }[];
+    options: QuestionOption[];
 }
