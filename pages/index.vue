@@ -25,6 +25,8 @@ const cardList = await $fetch<Card[]>(`/api/card/due?user_id=${user_id.value}`, 
             </div>
         </div>
         <UDivider class="h-10"/>
+
+        
         <div class="space-y-4">
             <div>
                 <p class="text-2xl font-bold">Need to review</p>
