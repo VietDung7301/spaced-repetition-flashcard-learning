@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  devtools: { enabled: process.env.DEBUG==="true" || process.env.DEBUG ==="TRUE" ? true : false },
 
   routeRules: {
     // prerender index route by default
@@ -10,7 +10,10 @@ export default defineNuxtConfig({
   modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxt/fonts'],
 
   runtimeConfig: {
-    DB_URL: process.env.DB_URL
+    DB_URL: process.env.DB_URL,
+    public: {
+      GEMINI_API_KEY: process.env.GEMINI_API_KEY
+    }
   },
 
   fonts: {

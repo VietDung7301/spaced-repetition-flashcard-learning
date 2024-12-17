@@ -17,7 +17,7 @@ const cardList = await $fetch<Card[]>(`/api/card/due?user_id=${user_id.value}`, 
             <p class="text-2xl font-bold">Learning Sets</p>
             <div class="grid grid-cols-4 max-sm:grid-cols-2 gap-4">
                 <div v-for="set in setList" class="basis-1/4">
-                    <UCard class="flex flex-col justify-center">
+                    <UCard class="flex flex-col justify-center hover:cursor-pointer" @click="navigateTo(`/set/${set.id}`)">
                         <UIcon name="i-material-symbols:folder" class="w-5 h-5" />
                         <p class="text-xl">{{ set.name }}</p>
                     </UCard>

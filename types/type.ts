@@ -22,6 +22,7 @@ export interface Card {
     interval: number;
     ease_factor: number;
     next_study_time: Date;
+    exampleAI: string | null;
 }
 
 export interface QuestionOption {

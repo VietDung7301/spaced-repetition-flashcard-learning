@@ -29,7 +29,7 @@ const onSubmit = (event: FormSubmitEvent<Schema>) => {
 
 <template>
 <div class="flex justify-center items-center">
-	<div class="h-52 flex justify-center items-center w-1/3">
+	<div class="h-52 flex justify-center items-center w-1/3 max-sm:w-11/12">
 		<UForm :schema="schema" :state="state" class="space-y-4 w-full" @submit="onSubmit">
 			<UFormGroup label="Name of this set" name="name" class="w-full">
 				<UInput v-model="state.name" />

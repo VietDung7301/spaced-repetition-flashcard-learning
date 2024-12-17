@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { _backgroundColor } from '#tailwind-config/theme';
-
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { CardQuestion, QuestionOption } from '~/types/type';
+
+const genAI = new GoogleGenerativeAI(useRuntimeConfig().public.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const { user_id } = storeToRefs(useAuthStore());
 
 const cardList = ref()
 const currentOptionList = ref<QuestionOption[]>()
 const isShowFullWord = ref(false)
+
 
 cardList.value = await $fetch<CardQuestion[]>(`/api/card/due?user_id=${user_id.value}`, {
     method: "GET",
@@ -25,6 +29,15 @@ for (let card of cardList.value) {
             option.bg_color = "white"
         }
     })
+    model.generateContent(`Hãy cho tôi 2 ví dụ về cách sử dụng câu có từ ${card.word} bằng tiếng Nhật.
+                            Hãy chỉ gửi cho tôi ví dụ của bạn và không nhắn thêm bất cứ điều gì.
+                            Câu trả lời được viết dưới dạng: 
+                                1. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
+                                2. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
+                            Trong đó, cách dọc được viết dưới dạng chữ hiragana, chữ hiragana là chữ có dạng ひらがな.`
+    ).then((value: any) => {
+        card.exampleAI = value.response.text().replaceAll("\n\n", "\n")
+    })
 }
 
 const handleAnswer = (option: QuestionOption) => {
@@ -41,18 +54,33 @@ const handleAnswer = (option: QuestionOption) => {
         option.bg_color = "green"
     } else {
         option.bg_color = "red"
-        isShowFullWord.value = true
     }
     setTimeout(() => {
+        isShowFullWord.value = true
+    }, 200)
+}
+
+const handleNextCard = () => {
+    isShowFullWord.value = false
+    currentCardIndex.value++
+    currentOptionList.value = cardList.value[currentCardIndex.value].options
+}
+
+defineShortcuts({
+  escape: {
+    usingInput: true,
+    whenever: [isShowFullWord],
+    handler: () => { 
+        isShowFullWord.value = false
         currentCardIndex.value++
         currentOptionList.value = cardList.value[currentCardIndex.value].options
-    }, 1000)
-    
-}
+    }
+  }
+})
 </script>
 
 <template>
-<div v-if="cardList.length" class="w-full flex justify-center pt-10">
+<div v-if="cardList?.length > currentCardIndex" class="w-full flex justify-center pt-10">
     <div class="flex flex-col w-3/4 gap-y-8 max-sm:w-full">
         <div class="grid grid-cols-12 gap-2">
             <UBadge class="col-span-1 justify-center">{{ currentCardIndex }}</UBadge>
@@ -93,25 +121,34 @@ const handleAnswer = (option: QuestionOption) => {
         </div>
     </div>
 </div>
-<USlideover v-model="isShowFullWord" prevent-close side="bottom">
-      <UCard class="flex flex-col flex-1" :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+<USlideover v-model="isShowFullWord" side="bottom" :overlay="false">
+    <UCard class="flex flex-col flex-1" :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
         <template #header>
           <div class="flex items-center justify-between">
-            <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-              Slideover
-            </h3>
-            <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="isShowFullWord = false" />
+            <div class="text-base dark:text-3xl dark:text-green-400 mb-2">{{ cardList[currentCardIndex].word }}</div>
+            <UButton icon="i-material-symbols:keyboard-double-arrow-right-rounded" @click="handleNextCard">
+                Next
+            </UButton>
           </div>
         </template>
 
-        <Placeholder class="h-full" />
+        <div clsss="grid grid-cols-2 gap-4 overflow-y-scroll">
+            <div class="">
+                <div class="text-xl">{{ cardList[currentCardIndex].pronunciation }}</div>
+                <div class="text-xl">{{ cardList[currentCardIndex].meaning }}</div>
+            </div>
+            <UDivider class="h-4"/>
+            <div class="">
+                <div v-if="cardList[currentCardIndex].example">
+                    <div class="text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> Example</div>
+                    <div class="whitespace-pre-wrap">{{cardList[currentCardIndex].example}}</div>
+                </div>
+                <div v-if="cardList[currentCardIndex].exampleAI">
+                    <div class="text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> AI generated example</div>
+                    <div class="whitespace-pre-wrap">{{cardList[currentCardIndex].exampleAI}}</div>
+                </div>
+            </div>
+        </div>
       </UCard>
     </USlideover>
 </template>
-
-
-<style scoped>
-div {
-  font-family: "Noto Sans JP", Roboto, sans-serif;
-}
-</style>
