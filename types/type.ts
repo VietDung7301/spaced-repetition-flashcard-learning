@@ -22,12 +22,17 @@ export interface Card {
     interval: number;
     ease_factor: number;
     next_study_time: Date;
+    exampleAI: string | null;
+}
+
+export interface QuestionOption {
+    word: string;
+    meaning: string;
+    pronunciation: string | null;
+    bg_color: string | null;
+    isCorrect: boolean;
 }
 
 export interface CardQuestion extends Card {
-    questions: {
-        word: string;
-        meaning: string;
-        pronunciation: string;
-    }[];
+    options: QuestionOption[];
 }
