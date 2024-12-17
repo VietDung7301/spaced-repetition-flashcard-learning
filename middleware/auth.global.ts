@@ -3,9 +3,16 @@ import type { User } from '~/types/type';
 
 export default defineNuxtRouteMiddleware((to) => {
     const { authenticated, user_id, username, userAvatar } = storeToRefs(useAuthStore());
-    const user = useCookie<User>("user")
+    const user = useCookie<User>("user", {
+        default: () => <User>{
+            id: NaN,
+            name: "",
+            email: "",
+            imageURL: "",
+        }
+    })
 
-    if (user.value && user.value !== null) {
+    if (user.value && !Number.isNaN(user.value.id)) {
         authenticated.value = true
         username.value = user.value.name
         user_id.value = user.value.id
@@ -16,7 +23,7 @@ export default defineNuxtRouteMiddleware((to) => {
     // if (user.value && to.path === '/login') {
     //     return navigateTo('/');
     // }
-    if (!user.value && to.path !== '/login') {
+    if (Number.isNaN(user.value.id) && to.path !== '/login') {
         return navigateTo('/login');
     }
 })
