@@ -11,13 +11,12 @@ export default defineNuxtRouteMiddleware((to) => {
         user_id.value = user.value.id
         userAvatar.value = user.value.imageURL
     }
+    console.log("to", to)
 
-    // if (user.value && to?.name === 'login') {
-    //     abortNavigation()
-    //     return navigateTo('/');
-    // }
-    if (!user.value && to?.name !== 'login') {
-        abortNavigation();
+    if (user.value && to.path === '/login') {
+        return navigateTo('/');
+    }
+    if (!user.value && to.path !== '/login') {
         return navigateTo('/login');
     }
 })
