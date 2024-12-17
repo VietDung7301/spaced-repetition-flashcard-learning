@@ -18,13 +18,12 @@ export default defineNuxtRouteMiddleware((to) => {
         user_id.value = user.value.id
         userAvatar.value = user.value.imageURL
     }
-    console.log("to", to)
+    console.log("to", to, "user cookie", user.value)
 
     // if (user.value && to.path === '/login') {
     //     return navigateTo('/');
     // }
     if (Number.isNaN(user.value.id) && to.path !== '/login') {
-        console.log("Day la cookie", user.value)
         return navigateTo('/login');
     }
 })
