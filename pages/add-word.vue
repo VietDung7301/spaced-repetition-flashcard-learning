@@ -26,44 +26,60 @@ const onSubmit = () => {
 			example: state.example,
 			set_id: state.set_id
 		}
-	}).then(() => toast.add({title: "Add new word success"}))
+	}).then(() => {
+		toast.add({title: "Add new word success"})
+		state.word = "",
+		state.pronunciation = "",
+		state.meaning = "",
+		state.example = ""
+	})
 }
 </script>
 
 <template>
 	<div class="flex flex-wrap  w-screen justify-center content-center mt-6">
-		<form class="w-4/5 mx-auto">
+		<form class="w-3/5 mx-auto max-sm:w-11/12">
 			<div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
 				<div class="flex flex-row">
-					<USelect 
-						v-model="state.set_id" 
-						:options="setList"
-						option-attribute="name"
-						value-attribute="id">
-					</USelect>
+					<UFormGroup label="Select set" class="mb-5 mr-5 w-1/2">
+						<USelect 
+							color="gray"
+							v-model="state.set_id" 
+							:options="setList"
+							option-attribute="name"
+							value-attribute="id">
+						</USelect>
+					</UFormGroup>
 				</div>
-				<div class="flex flex-row">
-					<div class="mb-5 mr-5 w-1/3">
+				<div class="flex flex-row mb-5 gap-4">
+					<div class="w-1/2">
 						<label for="kanji" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">漢字</label>
 						<input type="text" id="kanji" v-model="state.word"
 							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
                             focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
-                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="漢字"
+                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+							placeholder="漢字"
+							spellcheck="false"
 							required />
 					</div>
-					<div class="mr-5 w-1/3">
+					<div class="w-1/2">
 						<label for="read" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">読み方</label>
 						<input type="text" id="read" v-model="state.pronunciation"
 							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
                             focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
-                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="かんじ" />
+                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+							placeholder="かんじ" 
+							spellcheck="false"/>
 					</div>
-					<div class="mb-5 w-1/3">
+				</div>
+				<div class="flex flex-row mb-5">
+					<div class="w-full">
 						<label for="meaning" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">意味</label>
-						<input type="text" id="meaning" v-model="state.meaning"
+						<textarea type="text" id="meaning" v-model="state.meaning"
 							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
                             focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
-                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+							spellcheck="false"/>
 					</div>
 				</div>
 				<div class="flex flex-row">
@@ -71,7 +87,10 @@ const onSubmit = () => {
 						<label for="example" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">例</label>
 						<div class="mt-2">
 							<textarea name="example" id="example" rows="2" v-model="state.example"
-								class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"></textarea>
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                            focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							spellcheck="false" />
 						</div>
 					</div>
 				</div>

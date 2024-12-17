@@ -53,26 +53,31 @@ const handleAnswer = (option: QuestionOption) => {
 
 <template>
 <div v-if="cardList.length" class="w-full flex justify-center pt-10">
-    <div class="flex flex-col w-3/4">
+    <div class="flex flex-col w-3/4 gap-y-8 max-sm:w-full">
         <div class="grid grid-cols-12 gap-2">
-            <UBadge class="col-span-1 self-center">{{ currentCardIndex }}</UBadge>
+            <UBadge class="col-span-1 justify-center">{{ currentCardIndex }}</UBadge>
             <div class="col-span-10 self-center">
                 <UMeter :value="currentCardIndex" :min="0" :max="cardList.length"></UMeter>
             </div>
-            <UBadge class="col-span-1 self-center">{{ cardList.length }}</UBadge>
+            <UBadge class="col-span-1 justify-center">{{ cardList.length }}</UBadge>
         </div>
-        <div class="flex flex-col">
-            <div>{{ cardList[currentCardIndex].meaning }}</div>
-            <div class="grid grid-cols-2 gap-4">
-                <UButton v-for="(option, idx) in currentOptionList" 
-                    class="h-36 flex items-center justify-center"
-                    :key="idx"
-                    :style="{'background-color': option.bg_color}"
-                    @click="handleAnswer(option)">
-                    {{ option.word }}
-                </UButton>
+        <UCard>
+            <template #header>
+                <div class="h-8 text-xl">{{ cardList[currentCardIndex].meaning }}</div>
+            </template>
+
+            <div class="flex flex-col">
+                <div class="grid grid-cols-2 gap-4">
+                    <UButton v-for="(option, idx) in currentOptionList" 
+                        class="h-36 flex items-center justify-center text-xl"
+                        :key="idx"
+                        :style="{'background-color': option.bg_color}"
+                        @click="handleAnswer(option)">
+                        {{ option.word }}
+                    </UButton>
+                </div>
             </div>
-        </div>
+        </UCard>
     </div>
 </div>
 <div v-else>
@@ -103,3 +108,10 @@ const handleAnswer = (option: QuestionOption) => {
       </UCard>
     </USlideover>
 </template>
+
+
+<style scoped>
+div {
+  font-family: "Noto Sans JP", Roboto, sans-serif;
+}
+</style>

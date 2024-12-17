@@ -1,4 +1,4 @@
-import { integer, pgTable, varchar, real, timestamp } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, real, timestamp, text } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -15,8 +15,8 @@ export const cardsTable = pgTable("cards", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     word: varchar({ length: 255 }).notNull(),
     pronunciation: varchar({ length: 255 }),
-    meaning: varchar({ length: 255 }).notNull(),
-    example: varchar({ length: 255 }),
+    meaning: text().notNull(),
+    example: text(),
     set_id: integer().references(() => cardSetsTable.id),
 
     repetitions: integer().default(0).notNull(),

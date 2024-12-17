@@ -43,3 +43,8 @@ const links = [[{
   <slot></slot>
 </template>
 
+<style scoped>
+div {
+  font-family: "Noto Sans JP", Roboto, sans-serif;
+}
+</style>
