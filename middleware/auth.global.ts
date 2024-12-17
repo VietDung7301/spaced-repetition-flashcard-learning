@@ -12,10 +12,10 @@ export default defineNuxtRouteMiddleware((to) => {
         userAvatar.value = user.value.imageURL
     }
 
-    if (user.value && to?.name === 'login') {
-        abortNavigation()
-        return navigateTo('/');
-    }
+    // if (user.value && to?.name === 'login') {
+    //     abortNavigation()
+    //     return navigateTo('/');
+    // }
     if (!user.value && to?.name !== 'login') {
         abortNavigation();
         return navigateTo('/login');
