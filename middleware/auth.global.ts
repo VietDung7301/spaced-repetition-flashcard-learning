@@ -24,6 +24,7 @@ export default defineNuxtRouteMiddleware((to) => {
     //     return navigateTo('/');
     // }
     if (Number.isNaN(user.value.id) && to.path !== '/login') {
+        console.log("need to login again")
         return navigateTo('/login');
     }
 })
