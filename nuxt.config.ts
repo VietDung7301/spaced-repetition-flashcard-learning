@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: process.env.DEBUG==="true" || process.env.DEBUG ==="TRUE" ? true : false },
+  devtools: { enabled: true },
 
   routeRules: {
     // prerender index route by default

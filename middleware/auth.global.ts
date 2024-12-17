@@ -13,6 +13,7 @@ export default defineNuxtRouteMiddleware((to) => {
     }
 
     if (user.value && to?.name === 'login') {
+        abortNavigation()
         return navigateTo('/');
     }
     if (!user.value && to?.name !== 'login') {
