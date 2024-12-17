@@ -13,9 +13,9 @@ export default defineNuxtRouteMiddleware((to) => {
     }
     console.log("to", to)
 
-    if (user.value && to.path === '/login') {
-        return navigateTo('/');
-    }
+    // if (user.value && to.path === '/login') {
+    //     return navigateTo('/');
+    // }
     if (!user.value && to.path !== '/login') {
         return navigateTo('/login');
     }
