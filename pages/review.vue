@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { _backgroundColor } from '#tailwind-config/theme';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { empty } from 'superstruct';
 import type { CardQuestion, QuestionOption } from '~/types/type';
 
 const genAI = new GoogleGenerativeAI(useRuntimeConfig().public.GEMINI_API_KEY);
@@ -12,11 +13,32 @@ const cardList = ref()
 const currentOptionList = ref<QuestionOption[]>()
 const isShowFullWord = ref(false)
 
+const getWordExampleByAI = async (word: string) => {
+    return model.generateContent(`
+        Hãy cho tôi 2 ví dụ về cách sử dụng câu có từ ${word} bằng tiếng Nhật.
+        Hãy chỉ gửi cho tôi ví dụ của bạn và không nhắn thêm bất cứ điều gì.
+        Câu trả lời được viết dưới dạng: 
+            1. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
+            2. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
+        Trong đó, cách dọc được viết dưới dạng chữ hiragana. 
+        Ví dụ, chữ "勉強" khi được viết dưới dạng hiragana sẽ là "べんきょう" mà không phải là "benkyou".`
+    )
+}
 
 cardList.value = await $fetch<CardQuestion[]>(`/api/card/due?user_id=${user_id.value}`, {
     method: "GET",
 })
 let currentCardIndex = ref(0)
+
+if (!empty(cardList.value)) {
+    getWordExampleByAI(
+        cardList.value[currentCardIndex.value].word
+    ).then((value: any) => {
+        cardList.value[currentCardIndex.value].exampleAI = value.response.text().replaceAll("\n\n", "\n")
+    })
+}
+
+
 for (let card of cardList.value) {
     $fetch<QuestionOption>(`/api/card/question_option/${card.word}`, {
         method: 'GET'
@@ -56,13 +78,8 @@ const handleNextCard = () => {
     currentCardIndex.value++
     if (currentCardIndex.value < cardList.value.length) {
         currentOptionList.value = cardList.value[currentCardIndex.value].options
-        model.generateContent(`Hãy cho tôi 2 ví dụ về cách sử dụng câu có từ ${cardList.value[currentCardIndex.value].word} bằng tiếng Nhật.
-                                Hãy chỉ gửi cho tôi ví dụ của bạn và không nhắn thêm bất cứ điều gì.
-                                Câu trả lời được viết dưới dạng: 
-                                    1. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
-                                    2. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
-                                Trong đó, cách dọc được viết dưới dạng chữ hiragana. 
-                                Ví dụ, chữ "勉強" khi được viết dưới dạng hiragana sẽ là "べんきょう" mà không phải là "benkyou".`
+        getWordExampleByAI(
+            cardList.value[currentCardIndex.value].word
         ).then((value: any) => {
             cardList.value[currentCardIndex.value].exampleAI = value.response.text().replaceAll("\n\n", "\n")
         })
@@ -110,6 +127,39 @@ defineShortcuts({
             </div>
         </UCard>
     </div>
+    <USlideover v-model="isShowFullWord" side="bottom" :overlay="false">
+        <UCard>
+            <template #header>
+            <div class="flex items-center justify-between">
+                <div class="text-base dark:text-3xl dark:text-green-400 mb-2">{{ cardList[currentCardIndex].word }}</div>
+                <UButton icon="i-material-symbols:keyboard-double-arrow-right-rounded" @click="handleNextCard">
+                    Next
+                </UButton>
+            </div>
+            </template>
+
+            <div class="overflow-y-auto h-64">
+                <div class="">
+                    <div class="text-xl">{{ cardList[currentCardIndex].pronunciation }}</div>
+                    <div class="text-xl">{{ cardList[currentCardIndex].meaning }}</div>
+                </div>
+                <UDivider class="h-4"/>
+                <div class="">
+                    <div v-if="cardList[currentCardIndex].example">
+                        <div class="text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> Example</div>
+                        <div class="whitespace-pre-wrap">{{cardList[currentCardIndex].example}}</div>
+                    </div>
+                    <div v-if="cardList[currentCardIndex].exampleAI">
+                        <div class="text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> AI generated example</div>
+                        <div class="whitespace-pre-wrap">{{cardList[currentCardIndex].exampleAI}}</div>
+                    </div>
+                </div>
+            </div>
+            <template #footer>
+                <div class="h-0"></div>
+            </template>
+        </UCard>
+    </USlideover>
 </div>
 <div v-else>
     <div class="w-full flex justify-center pt-10">
@@ -124,34 +174,4 @@ defineShortcuts({
         </div>
     </div>
 </div>
-<USlideover v-model="isShowFullWord" side="bottom" :overlay="false">
-    <UCard class="flex flex-col flex-1" :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-        <template #header>
-          <div class="flex items-center justify-between">
-            <div class="text-base dark:text-3xl dark:text-green-400 mb-2">{{ cardList[currentCardIndex].word }}</div>
-            <UButton icon="i-material-symbols:keyboard-double-arrow-right-rounded" @click="handleNextCard">
-                Next
-            </UButton>
-          </div>
-        </template>
-
-        <div clsss="grid grid-cols-2 gap-4 overflow-y-scroll">
-            <div class="">
-                <div class="text-xl">{{ cardList[currentCardIndex].pronunciation }}</div>
-                <div class="text-xl">{{ cardList[currentCardIndex].meaning }}</div>
-            </div>
-            <UDivider class="h-4"/>
-            <div class="">
-                <div v-if="cardList[currentCardIndex].example">
-                    <div class="text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> Example</div>
-                    <div class="whitespace-pre-wrap">{{cardList[currentCardIndex].example}}</div>
-                </div>
-                <div v-if="cardList[currentCardIndex].exampleAI">
-                    <div class="text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> AI generated example</div>
-                    <div class="whitespace-pre-wrap">{{cardList[currentCardIndex].exampleAI}}</div>
-                </div>
-            </div>
-        </div>
-      </UCard>
-    </USlideover>
 </template>
