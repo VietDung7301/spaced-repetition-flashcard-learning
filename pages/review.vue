@@ -29,15 +29,6 @@ for (let card of cardList.value) {
             option.bg_color = "white"
         }
     })
-    model.generateContent(`Hãy cho tôi 2 ví dụ về cách sử dụng câu có từ ${card.word} bằng tiếng Nhật.
-                            Hãy chỉ gửi cho tôi ví dụ của bạn và không nhắn thêm bất cứ điều gì.
-                            Câu trả lời được viết dưới dạng: 
-                                1. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
-                                2. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
-                            Trong đó, cách dọc được viết dưới dạng chữ hiragana, chữ hiragana là chữ có dạng ひらがな.`
-    ).then((value: any) => {
-        card.exampleAI = value.response.text().replaceAll("\n\n", "\n")
-    })
 }
 
 const handleAnswer = (option: QuestionOption) => {
@@ -63,7 +54,19 @@ const handleAnswer = (option: QuestionOption) => {
 const handleNextCard = () => {
     isShowFullWord.value = false
     currentCardIndex.value++
-    currentOptionList.value = cardList.value[currentCardIndex.value].options
+    if (currentCardIndex.value < cardList.value.length) {
+        currentOptionList.value = cardList.value[currentCardIndex.value].options
+        model.generateContent(`Hãy cho tôi 2 ví dụ về cách sử dụng câu có từ ${cardList.value[currentCardIndex.value].word} bằng tiếng Nhật.
+                                Hãy chỉ gửi cho tôi ví dụ của bạn và không nhắn thêm bất cứ điều gì.
+                                Câu trả lời được viết dưới dạng: 
+                                    1. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
+                                    2. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
+                                Trong đó, cách dọc được viết dưới dạng chữ hiragana. 
+                                Ví dụ, chữ "勉強" khi được viết dưới dạng hiragana sẽ là "べんきょう" mà không phải là "benkyou".`
+        ).then((value: any) => {
+            cardList.value[currentCardIndex.value].exampleAI = value.response.text().replaceAll("\n\n", "\n")
+        })
+    }
 }
 
 defineShortcuts({
@@ -97,7 +100,7 @@ defineShortcuts({
             <div class="flex flex-col">
                 <div class="grid grid-cols-2 gap-4">
                     <UButton v-for="(option, idx) in currentOptionList" 
-                        class="h-36 flex items-center justify-center text-xl"
+                        class="h-36 flex items-center justify-center text-xl text-black"
                         :key="idx"
                         :style="{'background-color': option.bg_color}"
                         @click="handleAnswer(option)">
