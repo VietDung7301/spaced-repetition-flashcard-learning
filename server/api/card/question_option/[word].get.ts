@@ -26,6 +26,7 @@ export default defineEventHandler( async(event) => {
                             })
                             .from(cardsTable)
                             .where(ne(cardsTable.word, word))
+                            .orderBy(sql`random()`)
                             .limit(5)
     let result = await union(correctOption, wrongOption)
     shuffle(result)

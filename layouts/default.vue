@@ -42,4 +42,3 @@ const links = [[{
   </UHorizontalNavigation>
   <slot></slot>
 </template>
-
