@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/neon-http';
-import { sql, ne, eq } from 'drizzle-orm';
+import { sql, ne, eq, and } from 'drizzle-orm';
 import { union } from 'drizzle-orm/pg-core'
 import { cardsTable } from '../../../db/schema';
 import { shuffle } from '~/server/utils';
@@ -8,8 +8,9 @@ const db = drizzle(useRuntimeConfig().DB_URL);
 
 
 export default defineEventHandler( async(event) => {
-    const word = decodeURI(getRouterParam(event, 'word') as string)
-    console.log("word", word)
+    console.log("get qerry", getQuery(event))
+    const word = decodeURI((getQuery(event).word) as string)
+    const meaning = decodeURI((getQuery(event).meaning) as string)
     const correctOption = db.select({
                                 word: cardsTable.word, 
                                 meaning: cardsTable.meaning,
@@ -18,6 +19,7 @@ export default defineEventHandler( async(event) => {
                             })
                             .from(cardsTable)
                             .where(eq(cardsTable.word, word))
+                            .limit(1)
     const wrongOption = db.select({
                                 word: cardsTable.word, 
                                 meaning: cardsTable.meaning,
@@ -25,7 +27,7 @@ export default defineEventHandler( async(event) => {
                                 isCorrect: sql`false`
                             })
                             .from(cardsTable)
-                            .where(ne(cardsTable.word, word))
+                            .where(and(ne(cardsTable.word, word), ne(cardsTable.meaning, meaning)))
                             .orderBy(sql`random()`)
                             .limit(5)
     let result = await union(correctOption, wrongOption)

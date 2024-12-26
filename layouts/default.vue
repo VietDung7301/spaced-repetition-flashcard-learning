@@ -40,5 +40,7 @@ const links = [[{
       />
     </template>
   </UHorizontalNavigation>
-  <slot></slot>
+  <div class="bg-slate-50 h-screen">
+    <slot></slot>
+  </div>
 </template>
