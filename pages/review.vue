@@ -31,6 +31,7 @@ cardList.value = await $fetch<CardQuestion[]>(`/api/card/due?user_id=${user_id.v
 let currentCardIndex = ref(0)
 let questionType = ref<QuestionType>(randomEnum(QuestionType))
 let userInput = ref('')
+let inputColor = ref('primary')
 
 if (!empty(cardList.value)) {
     getWordExampleByAI(
@@ -55,7 +56,7 @@ for (let card of cardList.value) {
     })
 }
 
-const handleSubmitAnswer = (isSubmit:boolean) => {
+const handleSubmitAnswer = (isSubmit: boolean) => {
     $fetch(`/api/card/${cardList.value[currentCardIndex.value].id}`, {
         method: 'PUT',
         body: {
@@ -65,6 +66,9 @@ const handleSubmitAnswer = (isSubmit:boolean) => {
             repetitions: cardList.value[currentCardIndex.value].repetitions
         }
     })
+    if (cardList.value[currentCardIndex.value].word !== userInput.value || isSubmit !== true) {
+        inputColor.value = "red"
+    }
     setTimeout(() => {
         isShowFullWord.value = true
     }, 200)
@@ -94,6 +98,8 @@ const handleNextCard = () => {
     isShowFullWord.value = false
     questionType.value = randomEnum(QuestionType)
     currentCardIndex.value++
+    userInput.value = ""
+    inputColor.value = "primary"
     if (currentCardIndex.value < cardList.value.length) {
         currentOptionList.value = cardList.value[currentCardIndex.value].options
         getWordExampleByAI(
@@ -166,7 +172,8 @@ defineShortcuts({
                         v-model="userInput" 
                         class="col-span-8 h-full max-sm:col-span-12" 
                         size="xl" 
-                        icon="i-material-symbols:edit-square-outline"/>
+                        icon="i-material-symbols:edit-square-outline"
+                        :color="inputColor"/>
                     <div class="col-span-2 max-sm:col-span-12 h-full" >
                         <UButton
                             class="h-full"
