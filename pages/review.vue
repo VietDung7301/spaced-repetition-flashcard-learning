@@ -2,7 +2,7 @@
 import { _backgroundColor } from '#tailwind-config/theme';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { empty } from 'superstruct';
-import type { CardQuestion, QuestionOption } from '~/types/type';
+import { randomEnum, type CardQuestion, type QuestionOption, QuestionType } from '~/types/type';
 
 const genAI = new GoogleGenerativeAI(useRuntimeConfig().public.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -15,7 +15,7 @@ const isShowFullWord = ref(false)
 
 const getWordExampleByAI = async (word: string) => {
     return model.generateContent(`
-        Hãy cho tôi 2 ví dụ về cách sử dụng câu có từ ${word} bằng tiếng Nhật.
+        Hãy cho tìm cho tôi 2 câu có sử dụng câu có từ ${word} trong sách, báo, tạp chí hoặc website tiếng Nhật.
         Hãy chỉ gửi cho tôi ví dụ của bạn và không nhắn thêm bất cứ điều gì.
         Câu trả lời được viết dưới dạng: 
             1. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
@@ -29,6 +29,8 @@ cardList.value = await $fetch<CardQuestion[]>(`/api/card/due?user_id=${user_id.v
     method: "GET",
 })
 let currentCardIndex = ref(0)
+let questionType = ref<QuestionType>(randomEnum(QuestionType))
+let userInput = ref('')
 
 if (!empty(cardList.value)) {
     getWordExampleByAI(
@@ -40,7 +42,7 @@ if (!empty(cardList.value)) {
 
 
 for (let card of cardList.value) {
-    $fetch<QuestionOption>(`/api/card/question_option/${card.word}`, {
+    $fetch<QuestionOption>(`/api/card/question_option?word=${card.word}&meaning=${card.meaning}`, {
         method: 'GET'
     }).then((value: QuestionOption) => {
         if (value !== null) {
@@ -53,7 +55,22 @@ for (let card of cardList.value) {
     })
 }
 
-const handleAnswer = (option: QuestionOption) => {
+const handleSubmitAnswer = (isSubmit:boolean) => {
+    $fetch(`/api/card/${cardList.value[currentCardIndex.value].id}`, {
+        method: 'PUT',
+        body: {
+            isCorrect: cardList.value[currentCardIndex.value].word === userInput.value && isSubmit === true,
+            interval: cardList.value[currentCardIndex.value].interval,
+            ease_factor: cardList.value[currentCardIndex.value].ease_factor,
+            repetitions: cardList.value[currentCardIndex.value].repetitions
+        }
+    })
+    setTimeout(() => {
+        isShowFullWord.value = true
+    }, 200)
+}
+
+const handleChoseAnswer = (option: QuestionOption) => {
     $fetch(`/api/card/${cardList.value[currentCardIndex.value].id}`, {
         method: 'PUT',
         body: {
@@ -75,6 +92,7 @@ const handleAnswer = (option: QuestionOption) => {
 
 const handleNextCard = () => {
     isShowFullWord.value = false
+    questionType.value = randomEnum(QuestionType)
     currentCardIndex.value++
     if (currentCardIndex.value < cardList.value.length) {
         currentOptionList.value = cardList.value[currentCardIndex.value].options
@@ -111,19 +129,64 @@ defineShortcuts({
         </div>
         <UCard>
             <template #header>
-                <div class="h-8 text-xl">{{ cardList[currentCardIndex].meaning }}</div>
+                <div v-if="questionType !== QuestionType.WordToMeaningChose" class="h-8 text-xl">
+                    {{ cardList[currentCardIndex].meaning }}
+                </div>
+                <div v-else class="h-8 text-xl">
+                    {{ cardList[currentCardIndex].word }}
+                </div>
             </template>
 
-            <div class="flex flex-col">
+            <div v-if="questionType === QuestionType.MeaningToWordChose" class="flex flex-col">
                 <div class="grid grid-cols-2 gap-4">
                     <UButton v-for="(option, idx) in currentOptionList" 
-                        class="h-36 flex items-center justify-center text-xl text-black"
+                        class="h-36 flex items-center justify-center text-xl text-black shadow-md border-slate-300 border"
                         :key="idx"
                         :style="{'background-color': option.bg_color}"
-                        @click="handleAnswer(option)">
+                        @click="handleChoseAnswer(option)">
                         {{ option.word }}
                     </UButton>
                 </div>
+            </div>
+            <div v-else-if="questionType === QuestionType.WordToMeaningChose" class="flex flex-col">
+                <div class="grid grid-cols-2 gap-4">
+                    <UButton v-for="(option, idx) in currentOptionList" 
+                        class="h-36 flex items-center justify-center text-xl text-black shadow-md border-slate-300 border"
+                        :key="idx"
+                        :style="{'background-color': option.bg_color}"
+                        @click="handleChoseAnswer(option)">
+                        {{ option.meaning }}
+                    </UButton>
+                </div>
+            </div>
+            <div v-else>
+                <div class="grid grid-cols-12 gap-4">
+                    <UInput 
+                        @keyup.enter="handleSubmitAnswer(true)"
+                        v-model="userInput" 
+                        class="col-span-8 h-full max-sm:col-span-12" 
+                        size="xl" 
+                        icon="i-material-symbols:edit-square-outline"/>
+                    <div class="col-span-2 max-sm:col-span-12 h-full" >
+                        <UButton
+                            class="h-full"
+                            label="Submit"
+                            icon="i-material-symbols:keyboard-double-arrow-right-rounded"
+                            block
+                            @click="handleSubmitAnswer(true)"/>
+                    </div>
+                    <div class="col-span-2 max-sm:col-span-12 h-full" >
+                        <UButton
+                            class="h-full"
+                            label="Don't know"                            
+                            color="gray"
+                            icon="i-mingcute:unhappy-dizzy-line"
+                            block
+                            @click="handleSubmitAnswer(false)"
+                        />
+                    </div>
+                </div>
+                
             </div>
         </UCard>
     </div>
@@ -131,7 +194,7 @@ defineShortcuts({
         <UCard>
             <template #header>
             <div class="flex items-center justify-between">
-                <div class="text-base dark:text-3xl dark:text-green-400 mb-2">{{ cardList[currentCardIndex].word }}</div>
+                <div class="text-3xl text-green-800 dark:text-green-400 mb-2">{{ cardList[currentCardIndex].word }}</div>
                 <UButton icon="i-material-symbols:keyboard-double-arrow-right-rounded" @click="handleNextCard">
                     Next
                 </UButton>
