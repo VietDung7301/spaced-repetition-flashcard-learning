@@ -10,6 +10,8 @@ const cardList = await $fetch<Card[]>(`/api/card/due?user_id=${user_id.value}`, 
     method: "GET",
 })
 
+const isEdit = false;
+
 const items = [
   [{
     label: 'Profile',
@@ -33,7 +35,7 @@ const items = [
         </div>
     </div>
     <div class="m-5 grid grid-cols-1 gap-4">
-        <div v-for="card in cardList">
+        <div v-for="card in cardList" class="flex flex-row">
             <UCard class="min-w-48 w-1/2 mr-2 min-h-36">
                 <div class="text-lg font-bold">{{ card.word }}</div>
                 <div class="flex flex-wrap justify-between">
@@ -42,6 +44,10 @@ const items = [
                 </div>
                 <div class="italic">{{ card.example }}</div>
             </UCard>
+            <div class="w-24 mr-2 min-h-36 grid grid-col-2">
+                <UButton icon="mingcute:pencil-2-line" class="mb-2 ml-2" @click="isEdit = !isEdit">Edit</UButton>
+                <UButton icon="mingcute:delete-2-line" color="red" class="mt-2 ml-2">Delete</UButton>
+            </div>
         </div>
     </div>
 </template>
