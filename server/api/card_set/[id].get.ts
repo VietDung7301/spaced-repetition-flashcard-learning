@@ -10,5 +10,6 @@ export default defineEventHandler( async(event) => {
     const result = await db.select()
                             .from(cardsTable)
                             .where(eq(cardsTable.set_id, setId))
+                            .orderBy(cardsTable.id)
     return result
 })

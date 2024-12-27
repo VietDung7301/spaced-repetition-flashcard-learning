@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/neon-http';
-import { cardsTable } from '../../db/schema';
+import { cardsTable } from '../../../db/schema';
 import { sql, eq } from 'drizzle-orm';
 
 const db = drizzle(useRuntimeConfig().DB_URL);
