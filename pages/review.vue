@@ -2,8 +2,9 @@
 import { _backgroundColor } from '#tailwind-config/theme';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { empty } from 'superstruct';
-import { randomEnum, type CardQuestion, type QuestionOption, QuestionType } from '~/types/type';
+import { randomEnum, type CardQuestion, type QuestionOption, type Card, QuestionType } from '~/types/type';
 
+const toast = useToast()
 const genAI = new GoogleGenerativeAI(useRuntimeConfig().public.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -32,6 +33,7 @@ let currentCardIndex = ref(0)
 let questionType = ref<QuestionType>(randomEnum(QuestionType))
 let userInput = ref('')
 let inputColor = ref('primary')
+let isEdit = ref(false)
 
 if (!empty(cardList.value)) {
     getWordExampleByAI(
@@ -57,7 +59,7 @@ for (let card of cardList.value) {
 }
 
 const handleSubmitAnswer = (isSubmit: boolean) => {
-    $fetch(`/api/card/${cardList.value[currentCardIndex.value].id}`, {
+    $fetch(`/api/card/${cardList.value[currentCardIndex.value].id}/learning_process`, {
         method: 'PUT',
         body: {
             isCorrect: cardList.value[currentCardIndex.value].word === userInput.value && isSubmit === true,
@@ -75,7 +77,7 @@ const handleSubmitAnswer = (isSubmit: boolean) => {
 }
 
 const handleChoseAnswer = (option: QuestionOption) => {
-    $fetch(`/api/card/${cardList.value[currentCardIndex.value].id}`, {
+    $fetch(`/api/card/${cardList.value[currentCardIndex.value].id}/learning_process`, {
         method: 'PUT',
         body: {
             isCorrect: option.isCorrect,
@@ -108,6 +110,27 @@ const handleNextCard = () => {
             cardList.value[currentCardIndex.value].exampleAI = value.response.text().replaceAll("\n\n", "\n")
         })
     }
+}
+
+const state = reactive({
+	currentEditingCard: {} as Card
+})
+
+const handleClickEdit = (card:Card) => {
+    isEdit.value = true;
+    state.currentEditingCard = {...card}
+}
+
+const handleUpdateWord = async () => {
+	$fetch(`/api/card/${state.currentEditingCard.id}`, {
+		method: "PUT",
+		body: {
+            ...state.currentEditingCard
+		}
+	}).finally( () => {
+		toast.add({title: "Update word success"})
+        isEdit.value = false
+    })
 }
 
 defineShortcuts({
@@ -198,14 +221,18 @@ defineShortcuts({
             </div>
         </UCard>
     </div>
-    <USlideover v-model="isShowFullWord" side="bottom" :overlay="false">
+    <USlideover v-model="isShowFullWord" side="bottom" :overlay="false" prevent-close>
         <UCard>
             <template #header>
             <div class="flex items-center justify-between">
                 <div class="text-3xl text-green-800 dark:text-green-400 mb-2">{{ cardList[currentCardIndex].word }}</div>
-                <UButton icon="i-material-symbols:keyboard-double-arrow-right-rounded" @click="handleNextCard">
-                    Next
-                </UButton>
+                <div class="gap-4 flex">
+                    <UButton color="gray" icon="i-heroicons-pencil-square" @click="handleClickEdit(cardList[currentCardIndex])">
+                    </UButton>
+                    <UButton icon="i-material-symbols:keyboard-double-arrow-right-rounded" @click="handleNextCard">
+                        Next
+                    </UButton>
+                </div>
             </div>
             </template>
 
@@ -245,4 +272,31 @@ defineShortcuts({
         </div>
     </div>
 </div>
+<UModal v-model="isEdit" :overlay="true">
+    <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+    <template #header>
+        <div class="flex items-center justify-between">
+        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+            Edit
+        </h3>
+        <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="isEdit = false" />
+        </div>
+    </template>
+    <div>
+        <UFormGroup label="Word" name="word">
+            <UInput v-model="state.currentEditingCard.word" class="mb-3" :autofocus="true"/>
+        </UFormGroup>
+        <UFormGroup label="Pronounciation" name="pronunciation">
+            <UInput v-model="state.currentEditingCard.pronunciation" class="mb-3"/>
+        </UFormGroup>
+        <UFormGroup label="Meaning" name="meaning">
+            <UTextarea v-model="state.currentEditingCard.meaning" class="mb-3"/>
+        </UFormGroup>
+        <UFormGroup label="Example" name="example">
+            <UTextarea v-model="state.currentEditingCard.example" class="mb-3"/>
+        </UFormGroup>
+        <UButton icon="mingcute:check-circle-fill" type="submit" @click="handleUpdateWord">Submit</UButton>
+    </div>
+    </UCard>
+</UModal>
 </template>

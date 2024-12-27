@@ -6,13 +6,16 @@ const toast = useToast()
 const { user_id } = storeToRefs(useAuthStore());
 const { id: setId } = useRoute().params
 
+const cardList = ref<Card[]>()
 
-const setList = await $fetch<CardSet[]>(`/api/card_set?user_id=${user_id.value}`, {
+let setList = await $fetch<CardSet[]>(`/api/card_set?user_id=${user_id.value}`, {
     method: "GET",
 })
 
-const cardList = await $fetch<Card[]>(`/api/card_set/${setId}`, {
+$fetch<Card[]>(`/api/card_set/${setId}`, {
     method: "GET",
+}).then(value => {
+    cardList.value = value
 })
 
 const isEdit = ref(false);
@@ -26,27 +29,35 @@ const handleClickEdit = (card:Card) => {
     state.currentEditingCard = {...card}
 }
 
-const handleUpdateWord = () => {
+const handleUpdateWord = async () => {
 	$fetch(`/api/card/${state.currentEditingCard.id}`, {
 		method: "PUT",
 		body: {
             ...state.currentEditingCard
 		}
-	}).finally( () => 
+	}).finally( () => {
 		toast.add({title: "Update word success"})
-	)
+        isEdit.value = false
+        $fetch<Card[]>(`/api/card_set/${setId}`, {
+            method: "GET",
+        }).then((value:Card[]) => {
+            cardList.value = value
+        })
+    })
 }
 
-const handleDeleteWord = () => {
-    console.log(`${state.currentEditingCard.id} Welcome to Delete!`);
-    $fetch(`/api/card/${state.currentEditingCard.id}`, {
+const handleDeleteWord = (cardId:number) => {
+    console.log(`${cardId} Welcome to Delete!`);
+    $fetch(`/api/card/${cardId}`, {
 		method: "DELETE",
-		body: {
-            ...state.currentEditingCard
-		}
-	}).finally( () => 
+	}).finally( () => {
+        $fetch<Card[]>(`/api/card_set/${setId}`, {
+            method: "GET",
+        }).then((value:Card[]) => {
+            cardList.value = value
+        })
 		toast.add({title: "Delete word success"})
-	)
+    })
 }
 
 </script>
@@ -75,7 +86,7 @@ const handleDeleteWord = () => {
             </UCard>
             <div class="w-24 mr-2 min-h-36 grid grid-col-2 justify-center">
                 <UButton icon="mingcute:pencil-2-line" class="mb-2 ml-2 p-2" variant="soft" @click="handleClickEdit(card)">Edit</UButton>
-                <UButton icon="mingcute:delete-2-line" color="red" variant="soft" class="ml-2 p-2" @click="handleDeleteWord">Delete</UButton>
+                <UButton icon="mingcute:delete-2-line" color="red" variant="soft" class="ml-2 p-2" @click="handleDeleteWord(card.id)">Delete</UButton>
             </div>
         </div>
     </div>
@@ -97,10 +108,10 @@ const handleDeleteWord = () => {
                 <UInput v-model="state.currentEditingCard.pronunciation" class="mb-3"/>
             </UFormGroup>
             <UFormGroup label="Meaning" name="meaning">
-                <UInput v-model="state.currentEditingCard.meaning" class="mb-3"/>
+                <UTextarea v-model="state.currentEditingCard.meaning" class="mb-3"/>
             </UFormGroup>
             <UFormGroup label="Example" name="example">
-                <UInput v-model="state.currentEditingCard.example" class="mb-3"/>
+                <UTextarea v-model="state.currentEditingCard.example" class="mb-3"/>
             </UFormGroup>
             <UButton icon="mingcute:check-circle-fill" type="submit" @click="handleUpdateWord">Submit</UButton>
         </div>
