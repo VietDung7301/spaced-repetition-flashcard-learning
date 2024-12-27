@@ -7,7 +7,6 @@ import { randomEnum, type CardQuestion, type QuestionOption, type Card, Question
 const toast = useToast()
 const genAI = new GoogleGenerativeAI(useRuntimeConfig().public.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-const colorMode = useColorMode()
 const { user_id } = storeToRefs(useAuthStore());
 
 const cardList = ref()
@@ -16,8 +15,8 @@ const isShowFullWord = ref(false)
 
 const getWordExampleByAI = async (word: string) => {
     return model.generateContent(`
-        Hãy cho tìm cho tôi 2 câu có sử dụng câu có từ ${word} trong sách, báo, tạp chí hoặc website tiếng Nhật.
-        Hãy chỉ gửi cho tôi ví dụ của bạn và không nhắn thêm bất cứ điều gì.
+        Hãy tìm cho tôi 2 câu có sử dụng từ ${word} trong sách, báo, tạp chí hoặc website tiếng Nhật.
+        Hãy chỉ gửi cho tôi câu bạn tìm được và không nhắn thêm bất cứ điều gì.
         Câu trả lời được viết dưới dạng: 
             1. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
             2. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
@@ -53,9 +52,7 @@ for (let card of cardList.value) {
             currentOptionList.value = cardList.value[0].options
         }
         for (let option of card.options) {
-            if (colorMode.value === "dark")
-                option.bg_color = "rgb(15 23 42 / var(--tw-bg-opacity, 1))"
-            else option.bg_color = "white"
+            option.bg_color = {"bg-white dark:bg-slate-900": true}
         }
     })
 }
@@ -89,9 +86,9 @@ const handleChoseAnswer = (option: QuestionOption) => {
         }
     })
     if (option.isCorrect) {
-        option.bg_color = "green"
+        option.bg_color = {"bg-lime-600": true}
     } else {
-        option.bg_color = "red"
+        option.bg_color = {"bg-red-700": true}
     }
     setTimeout(() => {
         isShowFullWord.value = true
@@ -173,7 +170,7 @@ defineShortcuts({
                     <UButton v-for="(option, idx) in currentOptionList" 
                         class="h-36 flex items-center justify-center text-xl text-black dark:text-white shadow-md border-slate-300 border dark:border-slate-700"
                         :key="idx"
-                        :style="{'background-color': option.bg_color}"
+                        :class="option.bg_color"
                         @click="handleChoseAnswer(option)">
                         {{ option.word }}
                     </UButton>
@@ -184,7 +181,7 @@ defineShortcuts({
                     <UButton v-for="(option, idx) in currentOptionList" 
                         class="h-36 flex items-center justify-center text-xl text-black dark:text-white shadow-md border-slate-300 border dark:border-slate-700"
                         :key="idx"
-                        :style="{'background-color': option.bg_color}"
+                        :class="option.bg_color"
                         @click="handleChoseAnswer(option)">
                         {{ option.meaning }}
                     </UButton>

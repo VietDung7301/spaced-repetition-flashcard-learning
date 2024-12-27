@@ -29,7 +29,7 @@ export interface QuestionOption {
     word: string;
     meaning: string;
     pronunciation: string | null;
-    bg_color: string | null;
+    bg_color: {} | null;
     isCorrect: boolean;
 }
 
