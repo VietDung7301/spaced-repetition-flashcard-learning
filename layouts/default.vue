@@ -31,16 +31,19 @@ const links = [[{
 </script>
 
 <template>
-  <UHorizontalNavigation :links="links" class="border-b border-gray-200 dark:border-gray-800">
-    <template #avatar="{ link }">
-      <UAvatar
-        v-if="link.to === '/profile'"
-        size="sm"
-        :src=userAvatar
-      />
-    </template>
-  </UHorizontalNavigation>
-  <div class="bg-slate-50 h-screen">
-    <slot></slot>
+  <div class="min-h-screen bg-gradient-to-tr from-slate-50 via-sky-50 to-pink-100
+        dark:from-slate-900 dark:via-gray-800 dark:to-sky-900">
+    <UHorizontalNavigation :links="links" class="border-b border-gray-200 dark:border-gray-800">
+      <template #avatar="{ link }">
+        <UAvatar
+          v-if="link.to === '/profile'"
+          size="sm"
+          :src=userAvatar
+        />
+      </template>
+    </UHorizontalNavigation>
+    <div class="">
+      <slot></slot>
+    </div>
   </div>
 </template>

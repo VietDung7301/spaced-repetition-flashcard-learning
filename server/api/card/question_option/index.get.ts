@@ -8,7 +8,6 @@ const db = drizzle(useRuntimeConfig().DB_URL);
 
 
 export default defineEventHandler( async(event) => {
-    console.log("get qerry", getQuery(event))
     const word = decodeURI((getQuery(event).word) as string)
     const meaning = decodeURI((getQuery(event).meaning) as string)
     const correctOption = db.select({

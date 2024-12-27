@@ -5,8 +5,7 @@ const db = drizzle(useRuntimeConfig().DB_URL);
 
 export default defineEventHandler( async(event) =>{
     const requestBody = await readBody(event)
-    
-    console.log(requestBody)
+
 
     const {word, pronunciation = "", meaning, example = "", set_id} = {...requestBody}
 

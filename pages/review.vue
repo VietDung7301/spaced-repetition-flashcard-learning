@@ -51,7 +51,7 @@ for (let card of cardList.value) {
             currentOptionList.value = cardList.value[0].options
         }
         for (let option of card.options) {
-            option.bg_color = "white"
+            option.bg_color = "rgb(15 23 42 / var(--tw-bg-opacity, 1))"
         }
     })
 }
@@ -146,7 +146,7 @@ defineShortcuts({
             <div v-if="questionType === QuestionType.MeaningToWordChose" class="flex flex-col">
                 <div class="grid grid-cols-2 gap-4">
                     <UButton v-for="(option, idx) in currentOptionList" 
-                        class="h-36 flex items-center justify-center text-xl text-black shadow-md border-slate-300 border"
+                        class="h-36 flex items-center justify-center text-xl text-black dark:text-white shadow-md border-slate-300 border dark:border-slate-700"
                         :key="idx"
                         :style="{'background-color': option.bg_color}"
                         @click="handleChoseAnswer(option)">
@@ -157,7 +157,7 @@ defineShortcuts({
             <div v-else-if="questionType === QuestionType.WordToMeaningChose" class="flex flex-col">
                 <div class="grid grid-cols-2 gap-4">
                     <UButton v-for="(option, idx) in currentOptionList" 
-                        class="h-36 flex items-center justify-center text-xl text-black shadow-md border-slate-300 border"
+                        class="h-36 flex items-center justify-center text-xl text-black dark:text-white shadow-md border-slate-300 border dark:border-slate-700"
                         :key="idx"
                         :style="{'background-color': option.bg_color}"
                         @click="handleChoseAnswer(option)">
@@ -173,7 +173,8 @@ defineShortcuts({
                         class="col-span-8 h-full max-sm:col-span-12" 
                         size="xl" 
                         icon="i-material-symbols:edit-square-outline"
-                        :color="inputColor"/>
+                        :color="inputColor"
+                        :autofocus="true"/>
                     <div class="col-span-2 max-sm:col-span-12 h-full" >
                         <UButton
                             class="h-full"
