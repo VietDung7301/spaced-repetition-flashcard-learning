@@ -6,7 +6,7 @@ import { randomEnum, type CardQuestion, type QuestionOption, QuestionType } from
 
 const genAI = new GoogleGenerativeAI(useRuntimeConfig().public.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
+const colorMode = useColorMode()
 const { user_id } = storeToRefs(useAuthStore());
 
 const cardList = ref()
@@ -51,7 +51,9 @@ for (let card of cardList.value) {
             currentOptionList.value = cardList.value[0].options
         }
         for (let option of card.options) {
-            option.bg_color = "rgb(15 23 42 / var(--tw-bg-opacity, 1))"
+            if (colorMode.value === "dark")
+                option.bg_color = "rgb(15 23 42 / var(--tw-bg-opacity, 1))"
+            else option.bg_color = "white"
         }
     })
 }
