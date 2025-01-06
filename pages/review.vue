@@ -86,9 +86,9 @@ const handleChoseAnswer = (option: QuestionOption) => {
         }
     })
     if (option.isCorrect) {
-        option.bg_color = {"bg-lime-600": true}
+        option.bg_color = {"!bg-lime-600": true}
     } else {
-        option.bg_color = {"bg-red-700": true}
+        option.bg_color = {"!bg-red-700": true}
     }
     setTimeout(() => {
         isShowFullWord.value = true
@@ -136,11 +136,7 @@ defineShortcuts({
   escape: {
     usingInput: true,
     whenever: [isShowFullWord],
-    handler: () => { 
-        isShowFullWord.value = false
-        currentCardIndex.value++
-        currentOptionList.value = cardList.value[currentCardIndex.value].options
-    }
+    handler: () => handleNextCard()
   }
 })
 </script>

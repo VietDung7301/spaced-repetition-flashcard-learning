@@ -15,6 +15,7 @@ export default defineEventHandler( async(event) => {
                                     eq(cardSetsTable.user_id, user_id),
                                     lte(cardsTable.next_study_time, sql`now()`)
                                 ))
+                            .orderBy(cardsTable.next_study_time)
     const dueCardList = result.map((card) => card.cards)
     return dueCardList
 })
