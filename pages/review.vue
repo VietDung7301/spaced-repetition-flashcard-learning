@@ -86,9 +86,9 @@ const handleChoseAnswer = (option: QuestionOption) => {
         }
     })
     if (option.isCorrect) {
-        option.bg_color = {"!bg-emerald-600": true}
+        option.bg_color = {"!bg-primary-600": true}
     } else {
-        option.bg_color = {"!bg-red-700": true}
+        option.bg_color = {"!bg-red-600": true}
     }
     setTimeout(() => {
         isShowFullWord.value = true
@@ -216,7 +216,7 @@ defineShortcuts({
             </div>
         </UCard>
     </div>
-    <USlideover v-model="isShowFullWord" side="bottom" :overlay="false" prevent-close :ui="{wrapper: 'fixed inset-0 flex z-40'}">
+    <USlideover v-model="isShowFullWord" side="bottom" :overlay="false":ui="{wrapper: 'fixed inset-0 flex z-40'}">
         <UCard>
             <template #header>
             <div class="flex items-center justify-between">
