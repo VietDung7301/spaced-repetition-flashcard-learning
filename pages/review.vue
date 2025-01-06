@@ -86,7 +86,7 @@ const handleChoseAnswer = (option: QuestionOption) => {
         }
     })
     if (option.isCorrect) {
-        option.bg_color = {"!bg-lime-600": true}
+        option.bg_color = {"!bg-emerald-600": true}
     } else {
         option.bg_color = {"!bg-red-700": true}
     }
@@ -239,11 +239,11 @@ defineShortcuts({
                 <UDivider class="h-4"/>
                 <div class="">
                     <div v-if="cardList[currentCardIndex].example">
-                        <div class="text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> Example</div>
+                        <div class="text-green-800 dark:text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> Example</div>
                         <div class="whitespace-pre-wrap">{{cardList[currentCardIndex].example}}</div>
                     </div>
                     <div v-if="cardList[currentCardIndex].exampleAI">
-                        <div class="text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> AI generated example</div>
+                        <div class="text-green-800 dark:text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> AI generated example</div>
                         <div class="whitespace-pre-wrap">{{cardList[currentCardIndex].exampleAI}}</div>
                     </div>
                 </div>
