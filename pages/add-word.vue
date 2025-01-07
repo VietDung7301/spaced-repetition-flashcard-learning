@@ -15,6 +15,27 @@ const setList = await $fetch<CardSet[]>(`/api/card_set?user_id=${user_id.value}`
     method: "GET",
 })
 
+const onPaste = (event:any) => {
+	console.log(event.clipboardData.getData('text/plain'))
+	let input = event.clipboardData.getData('text/plain') as string
+
+	setTimeout(function() {
+		// See if it matches our format
+		let m = input.split('\t')
+		console.log("m", m)
+		if (m) {
+			if (m.length > 0)
+				state.word = m[0]
+			if (m.length > 1)
+				state.pronunciation = m[1]
+			if (m.length > 2)
+				state.meaning = m[2]
+			if (m.length > 3)
+				state.example = m[3]
+		}
+	}, 0);
+}
+
 
 const onSubmit = () => {
 	$fetch("/api/card", {
@@ -26,12 +47,19 @@ const onSubmit = () => {
 			example: state.example,
 			set_id: state.set_id
 		}
-	}).then(() => {
-		toast.add({title: "Add new word success"})
+	})
+	.then(() => {
+		toast.add({title: "Add new word success"}),
 		state.word = "",
 		state.pronunciation = "",
 		state.meaning = "",
 		state.example = ""
+	})
+	.catch((error) => {
+		toast.add({
+			title: error.statusMessage,
+			color: 'red'
+		})
 	})
 }
 </script>
@@ -55,6 +83,7 @@ const onSubmit = () => {
 					<div class="w-1/2">
 						<label for="kanji" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">漢字</label>
 						<input type="text" id="kanji" v-model="state.word"
+							@paste="onPaste"
 							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
                             focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
                             dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 

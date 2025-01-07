@@ -1,5 +1,6 @@
 import { drizzle } from 'drizzle-orm/neon-http';
 import { cardsTable } from '../../db/schema';
+import { except } from 'drizzle-orm/mysql-core';
 
 const db = drizzle(useRuntimeConfig().DB_URL);
 
@@ -17,5 +18,12 @@ export default defineEventHandler( async(event) =>{
         set_id: set_id
     }
 
-    await db.insert(cardsTable).values(card)
+    try {
+        await db.insert(cardsTable).values(card)
+    } catch(e) {
+        throw createError({
+            statusCode: 400,
+            statusMessage: 'This word already exists',
+        })
+    }
 })

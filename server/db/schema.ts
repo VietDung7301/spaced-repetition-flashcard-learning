@@ -1,4 +1,4 @@
-import { integer, pgTable, varchar, real, timestamp, text } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, real, timestamp, text, unique } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -23,4 +23,6 @@ export const cardsTable = pgTable("cards", {
     interval: integer().default(0).notNull(),
     ease_factor: real().default(1.3).notNull(),
     next_study_time: timestamp({mode: "date"}).defaultNow().notNull()
-})
+}, (t) => [{
+    unq: unique("card_word_constraint").on(t.word, t.set_id)
+}])
