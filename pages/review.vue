@@ -44,7 +44,7 @@ if (!empty(cardList.value)) {
 
 
 for (let card of cardList.value) {
-    $fetch<QuestionOption>(`/api/card/question_option?word=${card.word}&meaning=${card.meaning}`, {
+    $fetch<QuestionOption>(`/api/card/question_option?word=${card.word}&meaning=${card.meaning}&id=${card.id}`, {
         method: 'GET'
     }).then((value: QuestionOption) => {
         if (value !== null) {

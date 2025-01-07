@@ -10,6 +10,7 @@ const db = drizzle(useRuntimeConfig().DB_URL);
 export default defineEventHandler( async(event) => {
     const word = decodeURI((getQuery(event).word) as string)
     const meaning = decodeURI((getQuery(event).meaning) as string)
+    const id = (getQuery(event).meaning) as number
     const correctOption = db.select({
                                 word: cardsTable.word, 
                                 meaning: cardsTable.meaning,
@@ -17,7 +18,7 @@ export default defineEventHandler( async(event) => {
                                 isCorrect: sql`true`
                             })
                             .from(cardsTable)
-                            .where(eq(cardsTable.word, word))
+                            .where(eq(cardsTable.id, id))
                             .limit(1)
     const wrongOption = db.select({
                                 word: cardsTable.word, 
