@@ -57,7 +57,8 @@ for (let card of cardList.value) {
     })
 }
 
-const handleSubmitAnswer = (isSubmit: boolean) => {
+const handleSubmitAnswer = (isSubmit: boolean, event:any) => {
+    event.target.blur();
     $fetch(`/api/card/${cardList.value[currentCardIndex.value].id}/learning_process`, {
         method: 'PUT',
         body: {
@@ -186,7 +187,7 @@ defineShortcuts({
             <div v-else>
                 <div class="grid grid-cols-12 gap-4">
                     <UInput 
-                        @keyup.enter="handleSubmitAnswer(true)"
+                        @keyup.enter="handleSubmitAnswer(true, $event)"
                         v-model="userInput" 
                         class="col-span-8 h-full max-sm:col-span-12" 
                         size="xl" 
@@ -199,7 +200,7 @@ defineShortcuts({
                             label="Submit"
                             icon="i-material-symbols:keyboard-double-arrow-right-rounded"
                             block
-                            @click="handleSubmitAnswer(true)"/>
+                            @click="handleSubmitAnswer(true, $event)"/>
                     </div>
                     <div class="col-span-2 max-sm:col-span-12 h-full" >
                         <UButton
@@ -208,7 +209,7 @@ defineShortcuts({
                             color="gray"
                             icon="i-mingcute:unhappy-dizzy-line"
                             block
-                            @click="handleSubmitAnswer(false)"
+                            @click="handleSubmitAnswer(false, $event)"
                         />
                     </div>
                 </div>

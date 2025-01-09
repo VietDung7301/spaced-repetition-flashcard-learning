@@ -26,7 +26,7 @@ export default defineEventHandler( async(event) =>{
     }
 
     try {
-        await db.update(cardsTable)
+        const result = await db.update(cardsTable)
             .set({
                 interval: interval,
                 repetitions: repetitions,
@@ -34,6 +34,12 @@ export default defineEventHandler( async(event) =>{
                 next_study_time: sql`NOW() + interval '${sql.raw(interval)} hours'`
             })
             .where(eq(cardsTable.id, cardId))
+            .returning({ 
+                word: cardsTable.word,
+                id: cardsTable.id,
+                next_study_time: cardsTable.next_study_time
+            })
+        return result
     } catch (exception) {
         console.log("exception", exception)
     }
