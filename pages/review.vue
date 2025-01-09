@@ -216,7 +216,7 @@ defineShortcuts({
             </div>
         </UCard>
     </div>
-    <USlideover v-model="isShowFullWord" side="bottom" prevent-close :overlay="false":ui="{wrapper: 'fixed inset-0 flex z-40'}">
+    <div v-show="isShowFullWord" class="bottom-0 fixed w-screen">
         <UCard>
             <template #header>
             <div class="flex items-center justify-between">
@@ -252,7 +252,7 @@ defineShortcuts({
                 <div class="h-0"></div>
             </template>
         </UCard>
-    </USlideover>
+    </div>
 </div>
 <div v-else>
     <div class="w-full flex justify-center pt-10">
