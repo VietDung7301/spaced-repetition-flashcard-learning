@@ -89,6 +89,7 @@ const onSubmit = () => {
                             dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
 							placeholder="漢字"
 							spellcheck="false"
+							autocomplete="off"
 							required />
 					</div>
 					<div class="w-1/2">
@@ -98,7 +99,8 @@ const onSubmit = () => {
                             focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
                             dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
 							placeholder="かんじ" 
-							spellcheck="false"/>
+							spellcheck="false"
+							autocomplete="off"/>
 					</div>
 				</div>
 				<div class="flex flex-row mb-5">

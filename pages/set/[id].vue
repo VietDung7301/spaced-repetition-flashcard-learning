@@ -102,16 +102,16 @@ const handleDeleteWord = (cardId:number) => {
         </template>
         <div>
             <UFormGroup label="Word" name="word">
-                <UInput v-model="state.currentEditingCard.word" class="mb-3"/>
+                <UInput v-model="state.currentEditingCard.word" class="mb-3" autocomplete="off" spellcheck="false"/>
             </UFormGroup>
             <UFormGroup label="Pronounciation" name="pronunciation">
-                <UInput v-model="state.currentEditingCard.pronunciation" class="mb-3"/>
+                <UInput v-model="state.currentEditingCard.pronunciation" class="mb-3" autocomplete="off" spellcheck="false"/>
             </UFormGroup>
             <UFormGroup label="Meaning" name="meaning">
-                <UTextarea v-model="state.currentEditingCard.meaning" class="mb-3"/>
+                <UTextarea v-model="state.currentEditingCard.meaning" class="mb-3" autocomplete="off" spellcheck="false"/>
             </UFormGroup>
             <UFormGroup label="Example" name="example">
-                <UTextarea v-model="state.currentEditingCard.example" class="mb-3"/>
+                <UTextarea v-model="state.currentEditingCard.example" class="mb-3" autocomplete="off" spellcheck="false"/>
             </UFormGroup>
             <UButton icon="mingcute:check-circle-fill" type="submit" @click="handleUpdateWord">Submit</UButton>
         </div>

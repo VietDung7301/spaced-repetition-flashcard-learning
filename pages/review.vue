@@ -193,6 +193,8 @@ defineShortcuts({
                         size="xl" 
                         icon="i-material-symbols:edit-square-outline"
                         :color="inputColor"
+                        autocomplete="off"
+                        spellcheck="false"
                         :autofocus="true"/>
                     <div class="col-span-2 max-sm:col-span-12 h-full" >
                         <UButton
@@ -280,16 +282,16 @@ defineShortcuts({
     </template>
     <div>
         <UFormGroup label="Word" name="word">
-            <UInput v-model="state.currentEditingCard.word" class="mb-3" :autofocus="true"/>
+            <UInput v-model="state.currentEditingCard.word" class="mb-3" :autofocus="true" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
         <UFormGroup label="Pronounciation" name="pronunciation">
-            <UInput v-model="state.currentEditingCard.pronunciation" class="mb-3"/>
+            <UInput v-model="state.currentEditingCard.pronunciation" class="mb-3" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
         <UFormGroup label="Meaning" name="meaning">
-            <UTextarea v-model="state.currentEditingCard.meaning" class="mb-3"/>
+            <UTextarea v-model="state.currentEditingCard.meaning" class="mb-3" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
         <UFormGroup label="Example" name="example">
-            <UTextarea v-model="state.currentEditingCard.example" class="mb-3"/>
+            <UTextarea v-model="state.currentEditingCard.example" class="mb-3" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
         <UButton icon="mingcute:check-circle-fill" type="submit" @click="handleUpdateWord">Submit</UButton>
     </div>
