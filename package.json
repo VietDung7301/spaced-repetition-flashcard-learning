@@ -27,6 +27,7 @@
     "drizzle-orm": "^0.38.0",
     "pg": "^8.13.1",
     "pinia": "^2.3.0",
-    "superstruct": "^2.0.2"
+    "superstruct": "^2.0.2",
+    "vue-drawing-canvas": "^1.0.14"
   }
 }

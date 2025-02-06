@@ -26,7 +26,7 @@ const links = [[{
 }, {
   label: "Review",
   icon: "i-hugeicons:online-learning-01",
-  to: "/review"
+  to: "/review/vocabulary"
 }],
 [{
   icon: 'i-heroicons-sun-20-solid',
