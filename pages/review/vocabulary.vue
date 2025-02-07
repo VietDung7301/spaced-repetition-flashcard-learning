@@ -2,7 +2,7 @@
 import { _backgroundColor } from '#tailwind-config/theme';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { empty } from 'superstruct';
-import { randomEnum, type CardQuestion, type QuestionOption, type Card, QuestionType } from '~/types/type';
+import { randomEnum, type CardQuestion, type QuestionOption, type Card, QuestionType, type CardSet } from '~/types/type';
 
 const toast = useToast()
 const genAI = new GoogleGenerativeAI(useRuntimeConfig().public.GEMINI_API_KEY);
@@ -15,15 +15,29 @@ const isShowFullWord = ref(false)
 
 const getWordExampleByAI = async (word: string) => {
     return model.generateContent(`
-        Hãy tìm cho tôi 2 câu có sử dụng từ ${word} trong sách, báo, tạp chí hoặc website tiếng Nhật.
+        Hãy tìm cho tôi 2 câu có sử dụng từ ${word} trong báo hoặc hội thoại thường ngày.
         Hãy chỉ gửi cho tôi câu bạn tìm được và không nhắn thêm bất cứ điều gì.
         Câu trả lời được viết dưới dạng: 
-            1. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
-            2. Câu tiếng Nhật  Cách đọc  Ý nghĩa tiếng Việt.
+            1. Câu tiếng Nhật
+                Cách đọc
+                Ý nghĩa tiếng Việt.
+            2. Câu tiếng Nhật
+                Cách đọc
+                Ý nghĩa tiếng Việt.
         Trong đó, cách dọc được viết dưới dạng chữ hiragana. 
-        Ví dụ, chữ "勉強" khi được viết dưới dạng hiragana sẽ là "べんきょう" mà không phải là "benkyou".`
-    )
+        Ví dụ khi cần lấy ví dụ về từ 勉強 (べんきょう) thì câu trả lời sẽ là:
+            1. 勉強をするのが好きです。
+                べんきょうをするのがすきです。
+                Tôi thích học.
+            2. 今日は勉強しないで遊びます。
+                きょうはべんきょうしないであそびます。
+                Hôm nay tôi không học mà chơi.
+    `)
 }
+
+const setList = await $fetch<CardSet[]>(`/api/card_set?user_id=${user_id.value}`, {
+    method: "GET",
+})
 
 cardList.value = await $fetch<CardQuestion[]>(`/api/card/due?user_id=${user_id.value}`, {
     method: "GET",
@@ -122,6 +136,9 @@ const handleClickEdit = (card:Card) => {
 }
 
 const handleUpdateWord = async () => {
+    if (typeof state.currentEditingCard.set_id === 'string') {
+        state.currentEditingCard.set_id = Number(state.currentEditingCard.set_id)
+    }
 	$fetch(`/api/card/${state.currentEditingCard.id}`, {
 		method: "PUT",
 		body: {
@@ -281,6 +298,15 @@ defineShortcuts({
         </div>
     </template>
     <div>
+        <UFormGroup label="Select set" class="mb-5 mr-5 w-1/2">
+            <USelect 
+                color="gray"
+                v-model="state.currentEditingCard.set_id" 
+                :options="setList"
+                option-attribute="name"
+                value-attribute="id">
+            </USelect>
+        </UFormGroup>
         <UFormGroup label="Word" name="word">
             <UInput v-model="state.currentEditingCard.word" class="mb-3" :autofocus="true" autocomplete="off" spellcheck="false"/>
         </UFormGroup>

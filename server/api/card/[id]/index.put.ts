@@ -10,7 +10,7 @@ export default defineEventHandler( async(event) =>{
     console.log(requestBody)
     console.log(cardId)
 
-    let {word, meaning, pronunciation, example} = {...requestBody}
+    let {word, meaning, pronunciation, example, set_id} = {...requestBody}
 
     try {
         await db.update(cardsTable)
@@ -18,7 +18,8 @@ export default defineEventHandler( async(event) =>{
                 word: word,
                 meaning: meaning,
                 pronunciation: pronunciation,
-                example: example
+                example: example,
+                set_id: set_id
             })
             .where(eq(cardsTable.id, cardId))
     } catch (exception) {

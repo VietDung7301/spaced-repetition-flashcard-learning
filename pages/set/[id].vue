@@ -30,6 +30,9 @@ const handleClickEdit = (card:Card) => {
 }
 
 const handleUpdateWord = async () => {
+    if (typeof state.currentEditingCard.set_id === 'string') {
+        state.currentEditingCard.set_id = Number(state.currentEditingCard.set_id)
+    }
 	$fetch(`/api/card/${state.currentEditingCard.id}`, {
 		method: "PUT",
 		body: {
@@ -101,6 +104,15 @@ const handleDeleteWord = (cardId:number) => {
           </div>
         </template>
         <div>
+            <UFormGroup label="Select set" class="mb-5 mr-5 w-1/2">
+                <USelect 
+                    color="gray"
+                    v-model="state.currentEditingCard.set_id" 
+                    :options="setList"
+                    option-attribute="name"
+                    value-attribute="id">
+                </USelect>
+            </UFormGroup>
             <UFormGroup label="Word" name="word">
                 <UInput v-model="state.currentEditingCard.word" class="mb-3" autocomplete="off" spellcheck="false"/>
             </UFormGroup>
