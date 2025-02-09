@@ -51,7 +51,7 @@ if (!empty(cardList.value)) {
 
 
 for (let card of cardList.value) {
-    $fetch<GrammarQuestionOption>(`/api/card/grammar/question_option?grammar=${card.grammar}&meaning=${card.meaning}&id=${card.id}&user_id=${user_id}`, {
+    $fetch<GrammarQuestionOption>(`/api/card/grammar/question_option?grammar=${card.grammar}&meaning=${card.meaning}&id=${card.id}&user_id=${user_id.value}`, {
         method: 'GET'
     }).then((value: GrammarQuestionOption) => {
         if (value !== null) {
