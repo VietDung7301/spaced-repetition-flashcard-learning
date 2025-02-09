@@ -58,7 +58,7 @@ if (!empty(cardList.value)) {
 
 
 for (let card of cardList.value) {
-    $fetch<VocabQuestionOption>(`/api/card/vocabulary/question_option?word=${card.word}&meaning=${card.meaning}&id=${card.id}`, {
+    $fetch<VocabQuestionOption>(`/api/card/vocabulary/question_option?word=${card.word}&meaning=${card.meaning}&id=${card.id}&user_id=${user_id}`, {
         method: 'GET'
     }).then((value: VocabQuestionOption) => {
         if (value !== null) {

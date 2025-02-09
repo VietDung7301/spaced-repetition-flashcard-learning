@@ -12,6 +12,7 @@ export default defineEventHandler( async(event) => {
     const grammar = decodeURI((getQuery(event).grammar) as string)
     const meaning = decodeURI((getQuery(event).meaning) as string)
     const id = (getQuery(event).id) as number
+    const user_id = (getQuery(event).user_id) as number
     const correctOption = db.select({
                                 grammar: grammarsTable.grammar, 
                                 meaning: grammarsTable.meaning,
@@ -31,7 +32,8 @@ export default defineEventHandler( async(event) => {
                             .where(and(
                                 ne(grammarsTable.grammar, grammar), 
                                 ne(grammarsTable.meaning, meaning),
-                                eq(setsTable.type, SetType.grammar)
+                                eq(setsTable.type, SetType.grammar),
+                                eq(usersTable.id, user_id)
                             ))
                             .orderBy(sql`random()`)
                             .limit(5)

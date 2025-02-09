@@ -12,6 +12,7 @@ export default defineEventHandler( async(event) => {
     const word = decodeURI((getQuery(event).word) as string)
     const meaning = decodeURI((getQuery(event).meaning) as string)
     const id = (getQuery(event).id) as number
+    const user_id = (getQuery(event).user_id) as number
     const correctOption = db.select({
                                 word: vocabulariesTable.word, 
                                 meaning: vocabulariesTable.meaning,
@@ -33,7 +34,8 @@ export default defineEventHandler( async(event) => {
                             .where(and(
                                 ne(vocabulariesTable.word, word), 
                                 ne(vocabulariesTable.meaning, meaning),
-                                eq(setsTable.type, SetType.vocabulary)
+                                eq(setsTable.type, SetType.vocabulary),
+                                eq(usersTable.id, user_id)
                             ))
                             .orderBy(sql`random()`)
                             .limit(5)

@@ -51,7 +51,7 @@ if (!empty(cardList.value)) {
 
 
 for (let card of cardList.value) {
-    $fetch<GrammarQuestionOption>(`/api/card/grammar/question_option?grammar=${card.grammar}&meaning=${card.meaning}&id=${card.id}`, {
+    $fetch<GrammarQuestionOption>(`/api/card/grammar/question_option?grammar=${card.grammar}&meaning=${card.meaning}&id=${card.id}&user_id=${user_id}`, {
         method: 'GET'
     }).then((value: GrammarQuestionOption) => {
         if (value !== null) {
@@ -251,7 +251,7 @@ defineShortcuts({
         <UFormGroup label="Word" name="word">
             <UInput v-model="state.currentEditingCard.grammar" class="mb-3" :autofocus="true" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
-        <UFormGroup label="Pronounciation" name="structure">
+        <UFormGroup label="structure" name="structure">
             <UInput v-model="state.currentEditingCard.structure" class="mb-3" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
         <UFormGroup label="Meaning" name="meaning">
