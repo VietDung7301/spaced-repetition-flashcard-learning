@@ -1,23 +1,25 @@
 import { integer, pgTable, varchar, real, timestamp, text, unique } from "drizzle-orm/pg-core";
+import { SetType } from "../../types/type";
 
 export const usersTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     name: varchar({ length: 255 }).notNull(),
 })
 
-export const cardSetsTable = pgTable("card_lists", {
+export const setsTable = pgTable("card_lists", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     user_id: integer().references(() => usersTable.id),
-    name: varchar({ length: 255 }).notNull()
+    name: varchar({ length: 255 }).notNull(),
+    type: integer().notNull().default(SetType.vocabulary)
 })
 
-export const cardsTable = pgTable("cards", {
+export const vocabulariesTable = pgTable("cards", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     word: varchar({ length: 255 }).notNull(),
     pronunciation: varchar({ length: 255 }),
     meaning: text().notNull(),
     example: text(),
-    set_id: integer().references(() => cardSetsTable.id),
+    set_id: integer().references(() => setsTable.id),
 
     repetitions: integer().default(0).notNull(),
     interval: integer().default(0).notNull(),
@@ -27,24 +29,35 @@ export const cardsTable = pgTable("cards", {
     unq: unique("card_word_constraint").on(t.word, t.set_id)
 }])
 
-export const KanjiSetsTable = pgTable("kanji_sets", {
+export const kanjisTable = pgTable("kanjis", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    user_id: integer().references(() => usersTable.id),
-    name: varchar({ length: 255 }).notNull()
-})
-
-export const KanjiTable = pgTable("kanji", {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    kanji: varchar({ length: 255 }).notNull(),
-    meaning: varchar({ length: 255 }).notNull(),
-    pronunciation: varchar({ length: 255 }),
-    example: text(),
-    set_id: integer().references(() => KanjiSetsTable.id),
+    word: varchar({ length: 255 }).notNull(),       // Kanji
+    pronunciation: varchar({ length: 255 }),        // Hiragana
+    meaning: text().notNull(),                      // Meaning  
+    how_to_remember: text(),                        // How to remember
+    example: text(),                                // Example
+    set_id: integer().references(() => setsTable.id),
 
     repetitions: integer().default(0).notNull(),
     interval: integer().default(0).notNull(),
     ease_factor: real().default(1.3).notNull(),
     next_study_time: timestamp({mode: "date"}).defaultNow().notNull()
 }, (t) => [{
-    unq: unique("card_word_constraint").on(t.kanji, t.set_id)
+    unq: unique("kanji_constraint").on(t.word, t.set_id)
+}])
+
+export const grammarsTable = pgTable("grammars", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    grammar: varchar({ length: 255 }).notNull(),
+    structure: varchar({ length: 255 }),
+    meaning: text().notNull(),
+    example: text(),
+    set_id: integer().references(() => setsTable.id),
+
+    repetitions: integer().default(0).notNull(),
+    interval: integer().default(0).notNull(),
+    ease_factor: real().default(1.3).notNull(),
+    next_study_time: timestamp({mode: "date"}).defaultNow().notNull()
+}, (t) => [{
+    unq: unique("grammar_constraint").on(t.grammar, t.set_id)
 }])

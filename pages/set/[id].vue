@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import type { CardSet, Card } from '~/types/type';
+import type { CardSet, VocabCard } from '~/types/type';
 const toast = useToast()
 
 
 const { user_id } = storeToRefs(useAuthStore());
 const { id: setId } = useRoute().params
 
-const cardList = ref<Card[]>()
+const cardList = ref<VocabCard[]>()
 
 let setList = await $fetch<CardSet[]>(`/api/card_set?user_id=${user_id.value}`, {
     method: "GET",
 })
 
-$fetch<Card[]>(`/api/card_set/${setId}`, {
+$fetch<VocabCard[]>(`/api/card_set/${setId}`, {
     method: "GET",
 }).then(value => {
     cardList.value = value
@@ -21,10 +21,10 @@ $fetch<Card[]>(`/api/card_set/${setId}`, {
 const isEdit = ref(false);
 
 const state = reactive({
-	currentEditingCard: {} as Card
+	currentEditingCard: {} as VocabCard
 })
 
-const handleClickEdit = (card:Card) => {
+const handleClickEdit = (card:VocabCard) => {
     isEdit.value = true;
     state.currentEditingCard = {...card}
 }
@@ -33,7 +33,7 @@ const handleUpdateWord = async () => {
     if (typeof state.currentEditingCard.set_id === 'string') {
         state.currentEditingCard.set_id = Number(state.currentEditingCard.set_id)
     }
-	$fetch(`/api/card/${state.currentEditingCard.id}`, {
+	$fetch(`/api/card/vocabulary/${state.currentEditingCard.id}`, {
 		method: "PUT",
 		body: {
             ...state.currentEditingCard
@@ -41,9 +41,9 @@ const handleUpdateWord = async () => {
 	}).finally( () => {
 		toast.add({title: "Update word success"})
         isEdit.value = false
-        $fetch<Card[]>(`/api/card_set/${setId}`, {
+        $fetch<VocabCard[]>(`/api/card_set/${setId}`, {
             method: "GET",
-        }).then((value:Card[]) => {
+        }).then((value:VocabCard[]) => {
             cardList.value = value
         })
     })
@@ -51,12 +51,12 @@ const handleUpdateWord = async () => {
 
 const handleDeleteWord = (cardId:number) => {
     console.log(`${cardId} Welcome to Delete!`);
-    $fetch(`/api/card/${cardId}`, {
+    $fetch(`/api/card/vocabulary/${cardId}`, {
 		method: "DELETE",
 	}).finally( () => {
-        $fetch<Card[]>(`/api/card_set/${setId}`, {
+        $fetch<VocabCard[]>(`/api/card_set/${setId}`, {
             method: "GET",
-        }).then((value:Card[]) => {
+        }).then((value:VocabCard[]) => {
             cardList.value = value
         })
 		toast.add({title: "Delete word success"})

@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import type { CardSet, Card } from '~/types/type';
+import type { CardSet, VocabCard } from '~/types/type';
 const { user_id } = storeToRefs(useAuthStore());
 
-const setList = await $fetch<CardSet[]>(`/api/card_set?user_id=${user_id.value}`, {
+const cardList = ref<VocabCard[]>()
+const setList = ref<CardSet[]>()
+
+$fetch<CardSet[]>(`/api/card_set?user_id=${user_id.value}`, {
     method: "GET",
+}).then(value => {
+    setList.value = value
 })
 
-const cardList = await $fetch<Card[]>(`/api/card/due?user_id=${user_id.value}`, {
+$fetch<VocabCard[]>(`/api/card/vocabulary/due?user_id=${user_id.value}`, {
     method: "GET",
+}).then(value => {
+    cardList.value = value
 })
 </script>
 

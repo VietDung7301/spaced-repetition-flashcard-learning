@@ -2,7 +2,7 @@
 import { _backgroundColor } from '#tailwind-config/theme';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { empty } from 'superstruct';
-import { randomEnum, type VocabCardQuestion, type VocabQuestionOption, type VocabCard, VocabularyQuestionType, type CardSet } from '~/types/type';
+import { randomEnum, type GrammarCardQuestion, type GrammarQuestionOption, type VocabCard, GrammarQuestionType, type CardSet } from '~/types/type';
 
 const toast = useToast()
 const genAI = new GoogleGenerativeAI(useRuntimeConfig().public.GEMINI_API_KEY);
@@ -10,28 +10,21 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 const { user_id } = storeToRefs(useAuthStore());
 
 const cardList = ref()
-const currentOptionList = ref<VocabQuestionOption[]>()
+const currentOptionList = ref<GrammarQuestionOption[]>()
 const isShowFullWord = ref(false)
 
-const getWordExampleByAI = async (word: string) => {
+const getWordExampleByAI = async (grammar: string) => {
     return model.generateContent(`
-        Hãy tìm cho tôi 2 câu có sử dụng từ ${word} trong báo hoặc hội thoại thường ngày.
-        Hãy chỉ gửi cho tôi câu bạn tìm được và không nhắn thêm bất cứ điều gì.
-        Câu trả lời được viết dưới dạng: 
-            1. Câu tiếng Nhật
-                Cách đọc
-                Ý nghĩa tiếng Việt.
-            2. Câu tiếng Nhật
-                Cách đọc
-                Ý nghĩa tiếng Việt.
-        Trong đó, cách dọc được viết dưới dạng chữ hiragana. 
-        Ví dụ khi cần lấy ví dụ về từ 勉強 (べんきょう) thì câu trả lời sẽ là:
-            1. 勉強をするのが好きです。
-                べんきょうをするのがすきです。
-                Tôi thích học.
-            2. 今日は勉強しないで遊びます。
-                きょうはべんきょうしないであそびます。
-                Hôm nay tôi không học mà chơi.
+        Bạn là một chuyên gia về tiếng Nhật với nhiều năm kinh nghiệm trong việc giảng dạy và giải thích các quy tắc ngữ pháp cho người học. Bạn có khả năng cung cấp những ví dụ rõ ràng và dễ hiểu để người học có thể áp dụng vào giao tiếp hàng ngày.
+        Nhiệm vụ của bạn là tìm 3 ví dụ về cách sử dụng ngữ pháp ${grammar} trong câu tiếng Nhật.
+
+        Hãy lưu ý rằng các ví dụ cần phải bao gồm cả câu tiếng Nhật và bản dịch tiếng Việt để người học dễ dàng hiểu và áp dụng.
+
+        Ví dụ:
+
+        Câu ví dụ 1: __________
+        Câu ví dụ 2: __________
+        Câu ví dụ 3: __________
     `)
 }
 
@@ -39,18 +32,18 @@ const setList = await $fetch<CardSet[]>(`/api/card_set?user_id=${user_id.value}`
     method: "GET",
 })
 
-cardList.value = await $fetch<VocabCardQuestion[]>(`/api/card/vocabulary/due?user_id=${user_id.value}`, {
+cardList.value = await $fetch<GrammarCardQuestion[]>(`/api/card/grammar/due?user_id=${user_id.value}`, {
     method: "GET",
 })
 let currentCardIndex = ref(0)
-let questionType = ref<VocabularyQuestionType>(randomEnum(VocabularyQuestionType))
+let questionType = ref<GrammarQuestionType>(randomEnum(GrammarQuestionType))
 let userInput = ref('')
 let inputColor = ref('primary')
 let isEdit = ref(false)
 
 if (!empty(cardList.value)) {
     getWordExampleByAI(
-        cardList.value[currentCardIndex.value].word
+        cardList.value[currentCardIndex.value].grammar
     ).then((value: any) => {
         cardList.value[currentCardIndex.value].exampleAI = value.response.text().replaceAll("\n\n", "\n")
     })
@@ -58,9 +51,9 @@ if (!empty(cardList.value)) {
 
 
 for (let card of cardList.value) {
-    $fetch<VocabQuestionOption>(`/api/card/vocabulary/question_option?word=${card.word}&meaning=${card.meaning}&id=${card.id}`, {
+    $fetch<GrammarQuestionOption>(`/api/card/grammar/question_option?grammar=${card.grammar}&meaning=${card.meaning}&id=${card.id}`, {
         method: 'GET'
-    }).then((value: VocabQuestionOption) => {
+    }).then((value: GrammarQuestionOption) => {
         if (value !== null) {
             card.options = value
             currentOptionList.value = cardList.value[0].options
@@ -71,27 +64,8 @@ for (let card of cardList.value) {
     })
 }
 
-const handleSubmitAnswer = (isSubmit: boolean, event:any) => {
-    event.target.blur();
-    $fetch(`/api/card/vocabulary/${cardList.value[currentCardIndex.value].id}/learning_process`, {
-        method: 'PUT',
-        body: {
-            isCorrect: cardList.value[currentCardIndex.value].word === userInput.value && isSubmit === true,
-            interval: cardList.value[currentCardIndex.value].interval,
-            ease_factor: cardList.value[currentCardIndex.value].ease_factor,
-            repetitions: cardList.value[currentCardIndex.value].repetitions
-        }
-    })
-    if (cardList.value[currentCardIndex.value].word !== userInput.value || isSubmit !== true) {
-        inputColor.value = "red"
-    }
-    setTimeout(() => {
-        isShowFullWord.value = true
-    }, 200)
-}
-
-const handleChoseAnswer = (option: VocabQuestionOption) => {
-    $fetch(`/api/card/vocabulary/${cardList.value[currentCardIndex.value].id}/learning_process`, {
+const handleChoseAnswer = (option: GrammarQuestionOption) => {
+    $fetch(`/api/card/grammar/${cardList.value[currentCardIndex.value].id}/learning_process`, {
         method: 'PUT',
         body: {
             isCorrect: option.isCorrect,
@@ -112,14 +86,14 @@ const handleChoseAnswer = (option: VocabQuestionOption) => {
 
 const handleNextCard = () => {
     isShowFullWord.value = false
-    questionType.value = randomEnum(VocabularyQuestionType)
+    questionType.value = randomEnum(GrammarQuestionType)
     currentCardIndex.value++
     userInput.value = ""
     inputColor.value = "primary"
     if (currentCardIndex.value < cardList.value.length) {
         currentOptionList.value = cardList.value[currentCardIndex.value].options
         getWordExampleByAI(
-            cardList.value[currentCardIndex.value].word
+            cardList.value[currentCardIndex.value].grammar
         ).then((value: any) => {
             cardList.value[currentCardIndex.value].exampleAI = value.response.text().replaceAll("\n\n", "\n")
         })
@@ -139,7 +113,7 @@ const handleUpdateWord = async () => {
     if (typeof state.currentEditingCard.set_id === 'string') {
         state.currentEditingCard.set_id = Number(state.currentEditingCard.set_id)
     }
-	$fetch(`/api/card/vocabulary/${state.currentEditingCard.id}`, {
+	$fetch(`/api/card/grammar/${state.currentEditingCard.id}`, {
 		method: "PUT",
 		body: {
             ...state.currentEditingCard
@@ -171,26 +145,26 @@ defineShortcuts({
         </div>
         <UCard>
             <template #header>
-                <div v-if="questionType !== VocabularyQuestionType.WordToMeaningChose" class="h-8 text-xl">
+                <div v-if="questionType !== GrammarQuestionType.WordToMeaning" class="h-8 text-xl">
                     {{ cardList[currentCardIndex].meaning }}
                 </div>
                 <div v-else class="h-8 text-xl">
-                    {{ cardList[currentCardIndex].word }}
+                    {{ cardList[currentCardIndex].grammar }}
                 </div>
             </template>
 
-            <div v-if="questionType === VocabularyQuestionType.MeaningToWordChose" class="flex flex-col">
+            <div v-if="questionType === GrammarQuestionType.MeaningToWord" class="flex flex-col">
                 <div class="grid grid-cols-2 gap-4">
                     <UButton v-for="(option, idx) in currentOptionList" 
                         class="h-36 flex items-center justify-center text-xl text-black dark:text-white shadow-md border-slate-300 border dark:border-slate-700"
                         :key="idx"
                         :class="option.bg_color"
                         @click="handleChoseAnswer(option)">
-                        {{ option.word }}
+                        {{ option.grammar }}
                     </UButton>
                 </div>
             </div>
-            <div v-else-if="questionType === VocabularyQuestionType.WordToMeaningChose" class="flex flex-col">
+            <div v-else-if="questionType === GrammarQuestionType.WordToMeaning" class="flex flex-col">
                 <div class="grid grid-cols-2 gap-4">
                     <UButton v-for="(option, idx) in currentOptionList" 
                         class="h-36 flex items-center justify-center text-xl text-black dark:text-white shadow-md border-slate-300 border dark:border-slate-700"
@@ -201,46 +175,13 @@ defineShortcuts({
                     </UButton>
                 </div>
             </div>
-            <div v-else>
-                <div class="grid grid-cols-12 gap-4">
-                    <UInput 
-                        @keyup.enter="handleSubmitAnswer(true, $event)"
-                        v-model="userInput" 
-                        class="col-span-8 h-full max-sm:col-span-12" 
-                        size="xl" 
-                        icon="i-material-symbols:edit-square-outline"
-                        :color="inputColor"
-                        autocomplete="off"
-                        spellcheck="false"
-                        :autofocus="true"/>
-                    <div class="col-span-2 max-sm:col-span-12 h-full" >
-                        <UButton
-                            class="h-full"
-                            label="Submit"
-                            icon="i-material-symbols:keyboard-double-arrow-right-rounded"
-                            block
-                            @click="handleSubmitAnswer(true, $event)"/>
-                    </div>
-                    <div class="col-span-2 max-sm:col-span-12 h-full" >
-                        <UButton
-                            class="h-full"
-                            label="Don't know"                            
-                            color="gray"
-                            icon="i-mingcute:unhappy-dizzy-line"
-                            block
-                            @click="handleSubmitAnswer(false, $event)"
-                        />
-                    </div>
-                </div>
-                
-            </div>
         </UCard>
     </div>
     <div v-show="isShowFullWord" class="bottom-0 fixed w-screen">
         <UCard>
             <template #header>
             <div class="flex items-center justify-between">
-                <div class="text-3xl text-green-800 dark:text-green-400 mb-2">{{ cardList[currentCardIndex].word }}</div>
+                <div class="text-3xl text-green-800 dark:text-green-400 mb-2">{{ cardList[currentCardIndex].grammar }}</div>
                 <div class="gap-4 flex">
                     <UButton color="gray" icon="i-heroicons-pencil-square" @click="handleClickEdit(cardList[currentCardIndex])">
                     </UButton>
@@ -253,7 +194,7 @@ defineShortcuts({
 
             <div class="overflow-y-auto h-64">
                 <div class="">
-                    <div class="text-xl">{{ cardList[currentCardIndex].pronunciation }}</div>
+                    <div class="text-xl">{{ cardList[currentCardIndex].structure }}</div>
                     <div class="text-xl">{{ cardList[currentCardIndex].meaning }}</div>
                 </div>
                 <UDivider class="h-4"/>
@@ -308,10 +249,10 @@ defineShortcuts({
             </USelect>
         </UFormGroup>
         <UFormGroup label="Word" name="word">
-            <UInput v-model="state.currentEditingCard.word" class="mb-3" :autofocus="true" autocomplete="off" spellcheck="false"/>
+            <UInput v-model="state.currentEditingCard.grammar" class="mb-3" :autofocus="true" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
-        <UFormGroup label="Pronounciation" name="pronunciation">
-            <UInput v-model="state.currentEditingCard.pronunciation" class="mb-3" autocomplete="off" spellcheck="false"/>
+        <UFormGroup label="Pronounciation" name="structure">
+            <UInput v-model="state.currentEditingCard.structure" class="mb-3" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
         <UFormGroup label="Meaning" name="meaning">
             <UTextarea v-model="state.currentEditingCard.meaning" class="mb-3" autocomplete="off" spellcheck="false"/>

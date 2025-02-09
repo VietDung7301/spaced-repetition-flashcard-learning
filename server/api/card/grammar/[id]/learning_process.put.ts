@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/neon-http';
-import { cardsTable } from '../../../db/schema';
+import { vocabulariesTable } from '~/server/db/schema';
 import { sql, eq } from 'drizzle-orm';
 
 const db = drizzle(useRuntimeConfig().DB_URL);
@@ -26,18 +26,18 @@ export default defineEventHandler( async(event) =>{
     }
 
     try {
-        const result = await db.update(cardsTable)
+        const result = await db.update(vocabulariesTable)
             .set({
                 interval: interval,
                 repetitions: repetitions,
                 ease_factor: ease_factor,
                 next_study_time: sql`NOW() + interval '${sql.raw(interval)} hours'`
             })
-            .where(eq(cardsTable.id, cardId))
+            .where(eq(vocabulariesTable.id, cardId))
             .returning({ 
-                word: cardsTable.word,
-                id: cardsTable.id,
-                next_study_time: cardsTable.next_study_time
+                word: vocabulariesTable.word,
+                id: vocabulariesTable.id,
+                next_study_time: vocabulariesTable.next_study_time
             })
         return result
     } catch (exception) {

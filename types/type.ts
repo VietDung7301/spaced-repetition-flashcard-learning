@@ -11,7 +11,7 @@ export interface CardSet {
     user_id: number;
 }
 
-export interface Card {
+export interface VocabCard {
     id: number;
     word: string;
     pronunciation: string;
@@ -25,7 +25,21 @@ export interface Card {
     exampleAI: string | null;
 }
 
-export interface QuestionOption {
+export interface VocabCard {
+    id: number;
+    grammar: string;
+    structure: string;
+    meaning: string;
+    example: string;
+    set_id: number;
+    repetitions: number;
+    interval: number;
+    ease_factor: number;
+    next_study_time: Date;
+    exampleAI: string | null;
+}
+
+export interface VocabQuestionOption {
     word: string;
     meaning: string;
     pronunciation: string | null;
@@ -33,14 +47,31 @@ export interface QuestionOption {
     isCorrect: boolean;
 }
 
-export interface CardQuestion extends Card {
-    options: QuestionOption[];
+export interface GrammarQuestionOption {
+    grammar: string;
+    meaning: string;
+    bg_color: {} | null;
+    isCorrect: boolean;
 }
 
-export enum QuestionType {
+
+export interface VocabCardQuestion extends VocabCard {
+    options: VocabQuestionOption[];
+}
+
+export interface GrammarCardQuestion extends VocabCard {
+    options: GrammarQuestionOption[];
+}
+
+export enum VocabularyQuestionType {
     WordToMeaningChose,
     MeaningToWordChose,
     MeaningToWordFillBlank
+}
+
+export enum GrammarQuestionType {
+    WordToMeaning,
+    MeaningToWord
 }
 
 export function randomEnum<T>(anEnum: T extends object?object:any): T[keyof T] {
@@ -51,3 +82,9 @@ export function randomEnum<T>(anEnum: T extends object?object:any): T[keyof T] {
     const randomEnumValue = enumValues[randomIndex]
     return randomEnumValue;
   }
+
+export enum SetType {
+    kanji,
+    vocabulary,
+    grammar
+}

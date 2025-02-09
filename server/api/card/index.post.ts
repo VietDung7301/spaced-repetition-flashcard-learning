@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/neon-http';
-import { cardsTable } from '../../db/schema';
-import { except } from 'drizzle-orm/mysql-core';
+import { vocabulariesTable, grammarsTable, kanjisTable } from '~/server/db/schema';
+import { SetType } from "~/types/type"
 
 const db = drizzle(useRuntimeConfig().DB_URL);
 
@@ -8,22 +8,68 @@ export default defineEventHandler( async(event) =>{
     const requestBody = await readBody(event)
 
 
-    const {word, pronunciation = "", meaning, example = "", set_id} = {...requestBody}
+    const { type } = {...requestBody}
 
-    const card: typeof cardsTable.$inferInsert = {
-        word: word,
-        pronunciation: pronunciation,
-        meaning: meaning,
-        example: example,
-        set_id: set_id
-    }
+    if (type === SetType.vocabulary) {
+        const { word, pronunciation = "", meaning, example = "", set_id } = {...requestBody}
 
-    try {
-        await db.insert(cardsTable).values(card)
-    } catch(e) {
+        const card: typeof vocabulariesTable.$inferInsert = {
+            word: word,
+            pronunciation: pronunciation,
+            meaning: meaning,
+            example: example,
+            set_id: set_id
+        }
+    
+        try {
+            await db.insert(vocabulariesTable).values(card)
+        } catch(e) {
+            throw createError({
+                statusCode: 400,
+                statusMessage: 'This word already exists',
+            })
+        }
+    } else if (type === SetType.grammar) {
+        const { grammar, structure = "", meaning, example = "", set_id } = {...requestBody}
+        const card: typeof grammarsTable.$inferInsert = {
+            grammar: grammar,
+            meaning: meaning,
+            example: example,
+            set_id: set_id,
+            structure: structure
+        }
+
+        try {
+            await db.insert(grammarsTable).values(card)
+        } catch(e) {
+            throw createError({
+                statusCode: 400,
+                statusMessage: 'This grammar already exists',
+            })
+        }
+    } else if (type === SetType.kanji) {
+        const { word, meaning, example = "", set_id, pronunciation="", how_to_remember=""} = {...requestBody}
+        const card: typeof kanjisTable.$inferInsert = {
+            word: word,
+            meaning: meaning,
+            pronunciation: pronunciation,
+            example: example,
+            set_id: set_id,
+            how_to_remember: how_to_remember
+        }
+
+        try {
+            await db.insert(kanjisTable).values(card)
+        } catch(e) {
+            throw createError({
+                statusCode: 400,
+                statusMessage: 'This kanji already exists',
+            })
+        }
+    } else {
         throw createError({
             statusCode: 400,
-            statusMessage: 'This word already exists',
+            statusMessage: 'Invalid type',
         })
     }
 })
