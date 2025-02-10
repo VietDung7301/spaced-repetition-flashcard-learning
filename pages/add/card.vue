@@ -116,6 +116,17 @@ const onSubmit = () => {
 		vocabularyState.pronunciation = "",
 		vocabularyState.meaning = "",
 		vocabularyState.example = ""
+
+		grammarState.grammar = "",
+		grammarState.structure = "",
+		grammarState.meaning = "",
+		grammarState.example = ""
+
+		kanjiState.word = "",
+		kanjiState.pronunciation = "",
+		kanjiState.meaning = "",
+		kanjiState.how_to_remember = "",
+		kanjiState.example = ""
 	})
 	.catch((error) => {
 		toast.add({
