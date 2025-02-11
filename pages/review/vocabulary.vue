@@ -2,7 +2,7 @@
 import { _backgroundColor } from '#tailwind-config/theme';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { empty } from 'superstruct';
-import { randomEnum, type VocabCardQuestion, type VocabQuestionOption, type VocabCard, VocabularyQuestionType, type CardSet } from '~/types/type';
+import { randomEnum, type VocabCardQuestion, type VocabQuestionOption, type VocabCard, VocabularyQuestionType, type CardSet, SetType } from '~/types/type';
 
 const toast = useToast()
 const genAI = new GoogleGenerativeAI(useRuntimeConfig().public.GEMINI_API_KEY);
@@ -73,13 +73,14 @@ for (let card of cardList.value) {
 
 const handleSubmitAnswer = (isSubmit: boolean, event:any) => {
     event.target.blur();
-    $fetch(`/api/card/vocabulary/${cardList.value[currentCardIndex.value].id}/learning_process`, {
+    $fetch(`/api/card/${cardList.value[currentCardIndex.value].id}/learning_process`, {
         method: 'PUT',
         body: {
             isCorrect: cardList.value[currentCardIndex.value].word === userInput.value && isSubmit === true,
             interval: cardList.value[currentCardIndex.value].interval,
             ease_factor: cardList.value[currentCardIndex.value].ease_factor,
-            repetitions: cardList.value[currentCardIndex.value].repetitions
+            repetitions: cardList.value[currentCardIndex.value].repetitions,
+            type: SetType.vocabulary
         }
     })
     if (cardList.value[currentCardIndex.value].word !== userInput.value || isSubmit !== true) {
@@ -91,13 +92,14 @@ const handleSubmitAnswer = (isSubmit: boolean, event:any) => {
 }
 
 const handleChoseAnswer = (option: VocabQuestionOption) => {
-    $fetch(`/api/card/vocabulary/${cardList.value[currentCardIndex.value].id}/learning_process`, {
+    $fetch(`/api/card/${cardList.value[currentCardIndex.value].id}/learning_process`, {
         method: 'PUT',
         body: {
             isCorrect: option.isCorrect,
             interval: cardList.value[currentCardIndex.value].interval,
             ease_factor: cardList.value[currentCardIndex.value].ease_factor,
-            repetitions: cardList.value[currentCardIndex.value].repetitions
+            repetitions: cardList.value[currentCardIndex.value].repetitions,
+            type: SetType.vocabulary
         }
     })
     if (option.isCorrect) {
@@ -139,10 +141,11 @@ const handleUpdateWord = async () => {
     if (typeof state.currentEditingCard.set_id === 'string') {
         state.currentEditingCard.set_id = Number(state.currentEditingCard.set_id)
     }
-	$fetch(`/api/card/vocabulary/${state.currentEditingCard.id}`, {
+	$fetch(`/api/card/${state.currentEditingCard.id}`, {
 		method: "PUT",
 		body: {
-            ...state.currentEditingCard
+            ...state.currentEditingCard,
+            type: SetType.vocabulary
 		}
 	}).finally( () => {
 		toast.add({title: "Update word success"})

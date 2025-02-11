@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import type { CardSet, VocabCard } from '~/types/type';
+import type { CardSet, CardList, VocabCard, GrammarCard, KanjiCard } from '~/types/type';
+import { SetType } from "~/types/type"
 const toast = useToast()
 
 
 const { user_id } = storeToRefs(useAuthStore());
 const { id: setId } = useRoute().params
 
-const cardList = ref<VocabCard[]>()
+const cardList = ref<CardList>()
 
 let setList = await $fetch<CardSet[]>(`/api/card_set?user_id=${user_id.value}`, {
     method: "GET",
 })
 
-$fetch<VocabCard[]>(`/api/card_set/${setId}`, {
+$fetch<CardList>(`/api/card_set/${setId}`, {
     method: "GET",
 }).then(value => {
     cardList.value = value
@@ -21,10 +22,10 @@ $fetch<VocabCard[]>(`/api/card_set/${setId}`, {
 const isEdit = ref(false);
 
 const state = reactive({
-	currentEditingCard: {} as VocabCard
+	currentEditingCard: {} as VocabCard | GrammarCard | KanjiCard
 })
 
-const handleClickEdit = (card:VocabCard) => {
+const handleClickEdit = (card:VocabCard | GrammarCard | KanjiCard) => {
     isEdit.value = true;
     state.currentEditingCard = {...card}
 }
@@ -33,30 +34,30 @@ const handleUpdateWord = async () => {
     if (typeof state.currentEditingCard.set_id === 'string') {
         state.currentEditingCard.set_id = Number(state.currentEditingCard.set_id)
     }
-	$fetch(`/api/card/vocabulary/${state.currentEditingCard.id}`, {
+	$fetch(`/api/card/${state.currentEditingCard.id}`, {
 		method: "PUT",
 		body: {
-            ...state.currentEditingCard
+            ...state.currentEditingCard,
+            type: cardList.value?.type
 		}
 	}).finally( () => {
 		toast.add({title: "Update word success"})
         isEdit.value = false
-        $fetch<VocabCard[]>(`/api/card_set/${setId}`, {
+        $fetch<CardList>(`/api/card_set/${setId}`, {
             method: "GET",
-        }).then((value:VocabCard[]) => {
+        }).then((value: CardList) => {
             cardList.value = value
         })
     })
 }
 
 const handleDeleteWord = (cardId:number) => {
-    console.log(`${cardId} Welcome to Delete!`);
-    $fetch(`/api/card/vocabulary/${cardId}`, {
+    $fetch(`/api/card/${cardId}?type=${cardList.value?.type}`, {
 		method: "DELETE",
 	}).finally( () => {
-        $fetch<VocabCard[]>(`/api/card_set/${setId}`, {
+        $fetch<CardList>(`/api/card_set/${setId}`, {
             method: "GET",
-        }).then((value:VocabCard[]) => {
+        }).then((value: CardList) => {
             cardList.value = value
         })
 		toast.add({title: "Delete word success"})
@@ -78,14 +79,12 @@ const handleDeleteWord = (cardId:number) => {
         </div>
     </div>
     <div class="m-5 grid grid-cols-1 gap-4">
-        <div v-for="card in cardList" class="flex flex-row">
+        <div v-for="card in cardList?.cards" class="flex flex-row">
             <UCard class="min-w-48 w-1/2 mr-2 min-h-36">
-                <div class="text-lg font-bold">{{ card.word }}</div>
+                <div class="text-lg font-bold">{{ 'word' in card ? card.word : ('grammar' in card ? card.grammar : '') }}</div>
                 <div class="flex flex-wrap justify-between">
-                    <div class="pr-5">{{ card.pronunciation }}</div>
                     <div class="content-center">{{ card.meaning }}</div>
                 </div>
-                <div class="italic">{{ card.example }}</div>
             </UCard>
             <div class="w-24 mr-2 min-h-36 grid grid-col-2 justify-center">
                 <UButton icon="mingcute:pencil-2-line" class="mb-2 ml-2 p-2" variant="soft" @click="handleClickEdit(card)">Edit</UButton>
@@ -113,14 +112,23 @@ const handleDeleteWord = (cardId:number) => {
                     value-attribute="id">
                 </USelect>
             </UFormGroup>
-            <UFormGroup label="Word" name="word">
+            <UFormGroup v-if="'word' in state.currentEditingCard" label="Word" name="word">
                 <UInput v-model="state.currentEditingCard.word" class="mb-3" autocomplete="off" spellcheck="false"/>
             </UFormGroup>
-            <UFormGroup label="Pronounciation" name="pronunciation">
+            <UFormGroup v-if="'grammar' in state.currentEditingCard" label="Grammar" name="grammar">
+                <UInput v-model="state.currentEditingCard.grammar" class="mb-3" autocomplete="off" spellcheck="false"/>
+            </UFormGroup>
+            <UFormGroup v-if="'pronunciation' in state.currentEditingCard" label="Pronunciation" name="pronunciation">
                 <UInput v-model="state.currentEditingCard.pronunciation" class="mb-3" autocomplete="off" spellcheck="false"/>
+            </UFormGroup>
+            <UFormGroup v-if="'structure' in state.currentEditingCard" label="Structure" name="structure">
+                <UInput v-model="state.currentEditingCard.structure" class="mb-3" autocomplete="off" spellcheck="false"/>
             </UFormGroup>
             <UFormGroup label="Meaning" name="meaning">
                 <UTextarea v-model="state.currentEditingCard.meaning" class="mb-3" autocomplete="off" spellcheck="false"/>
+            </UFormGroup>
+            <UFormGroup v-if="'how_to_remember' in state.currentEditingCard" label="How to remember" name="how-to-remember" >
+                <UTextarea v-model="state.currentEditingCard.how_to_remember" class="mb-3" autocomplete="off" spellcheck="false"></UTextarea>
             </UFormGroup>
             <UFormGroup label="Example" name="example">
                 <UTextarea v-model="state.currentEditingCard.example" class="mb-3" autocomplete="off" spellcheck="false"/>

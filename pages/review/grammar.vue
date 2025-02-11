@@ -2,7 +2,7 @@
 import { _backgroundColor } from '#tailwind-config/theme';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { empty } from 'superstruct';
-import { randomEnum, type GrammarCardQuestion, type GrammarQuestionOption, type VocabCard, GrammarQuestionType, type CardSet } from '~/types/type';
+import { randomEnum, type GrammarCardQuestion, type GrammarQuestionOption, type GrammarCard, GrammarQuestionType, type CardSet, SetType } from '~/types/type';
 
 const toast = useToast()
 const genAI = new GoogleGenerativeAI(useRuntimeConfig().public.GEMINI_API_KEY);
@@ -19,12 +19,12 @@ const getWordExampleByAI = async (grammar: string) => {
         Nhiệm vụ của bạn là tìm 3 ví dụ về cách sử dụng ngữ pháp ${grammar} trong câu tiếng Nhật.
 
         Hãy lưu ý rằng các ví dụ cần phải bao gồm cả câu tiếng Nhật và bản dịch tiếng Việt để người học dễ dàng hiểu và áp dụng.
-
+        Hãy chỉ đưa ra ví dụ kèm bản dịch tiếng Việt và đừng giải nói gì thêm.
         Ví dụ:
 
-        Câu ví dụ 1: __________
-        Câu ví dụ 2: __________
-        Câu ví dụ 3: __________
+        1: __________
+        2: __________
+        3: __________
     `)
 }
 
@@ -65,13 +65,14 @@ for (let card of cardList.value) {
 }
 
 const handleChoseAnswer = (option: GrammarQuestionOption) => {
-    $fetch(`/api/card/grammar/${cardList.value[currentCardIndex.value].id}/learning_process`, {
+    $fetch(`/api/card/${cardList.value[currentCardIndex.value].id}/learning_process`, {
         method: 'PUT',
         body: {
             isCorrect: option.isCorrect,
             interval: cardList.value[currentCardIndex.value].interval,
             ease_factor: cardList.value[currentCardIndex.value].ease_factor,
-            repetitions: cardList.value[currentCardIndex.value].repetitions
+            repetitions: cardList.value[currentCardIndex.value].repetitions,
+            type: SetType.grammar
         }
     })
     if (option.isCorrect) {
@@ -101,10 +102,10 @@ const handleNextCard = () => {
 }
 
 const state = reactive({
-	currentEditingCard: {} as VocabCard
+	currentEditingCard: {} as GrammarCard
 })
 
-const handleClickEdit = (card:VocabCard) => {
+const handleClickEdit = (card:GrammarCard) => {
     isEdit.value = true;
     state.currentEditingCard = {...card}
 }
@@ -113,10 +114,11 @@ const handleUpdateWord = async () => {
     if (typeof state.currentEditingCard.set_id === 'string') {
         state.currentEditingCard.set_id = Number(state.currentEditingCard.set_id)
     }
-	$fetch(`/api/card/grammar/${state.currentEditingCard.id}`, {
+	$fetch(`/api/card/${state.currentEditingCard.id}`, {
 		method: "PUT",
 		body: {
-            ...state.currentEditingCard
+            ...state.currentEditingCard,
+            type: SetType.grammar
 		}
 	}).finally( () => {
 		toast.add({title: "Update word success"})
@@ -248,10 +250,10 @@ defineShortcuts({
                 value-attribute="id">
             </USelect>
         </UFormGroup>
-        <UFormGroup label="Word" name="word">
+        <UFormGroup label="Grammar" name="Grammar">
             <UInput v-model="state.currentEditingCard.grammar" class="mb-3" :autofocus="true" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
-        <UFormGroup label="structure" name="structure">
+        <UFormGroup label="Structure" name="structure">
             <UInput v-model="state.currentEditingCard.structure" class="mb-3" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
         <UFormGroup label="Meaning" name="meaning">

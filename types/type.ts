@@ -25,7 +25,7 @@ export interface VocabCard {
     exampleAI: string | null;
 }
 
-export interface VocabCard {
+export interface GrammarCard {
     id: number;
     grammar: string;
     structure: string;
@@ -37,6 +37,27 @@ export interface VocabCard {
     ease_factor: number;
     next_study_time: Date;
     exampleAI: string | null;
+}
+
+export interface KanjiCard {
+    id: number;
+    kanji: string;
+    pronunciation: string;
+    meaning: string;
+    how_to_remember: string;
+    example: string;
+    set_id: number;
+    repetitions: number;
+    interval: number;
+    ease_factor: number;
+    next_study_time: Date;
+    exampleAI: string | null;
+}
+
+
+export interface CardList {
+    type: SetType;
+    cards: VocabCard[] | GrammarCard[] | KanjiCard[];
 }
 
 export interface VocabQuestionOption {
