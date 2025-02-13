@@ -54,24 +54,39 @@ const onChangeType = () => {
 }
 
 const onPaste = (event:any) => {
-	console.log(event.clipboardData.getData('text/plain'))
 	let input = event.clipboardData.getData('text/plain') as string
 
-	setTimeout(function() {
-		// See if it matches our format
-		let m = input.split('\t')
-		console.log("m", m)
-		if (m) {
-			if (m.length > 0)
-				vocabularyState.word = m[0]
-			if (m.length > 1)
-				vocabularyState.pronunciation = m[1]
-			if (m.length > 2)
-				vocabularyState.meaning = m[2]
-			if (m.length > 3)
-				vocabularyState.example = m[3]
-		}
-	}, 0);
+	if (cardType.value === SetType.vocabulary) {
+		setTimeout(function() {
+			// See if it matches our format
+			let m = input.split('\t')
+			if (m) {
+				if (m.length > 0)
+					vocabularyState.word = m[0]
+				if (m.length > 1)
+					vocabularyState.pronunciation = m[1]
+				if (m.length > 2)
+					vocabularyState.meaning = m[2]
+				if (m.length > 3)
+					vocabularyState.example = m[3]
+			}
+		}, 0);
+	} else if (cardType.value === SetType.grammar) {
+		setTimeout(function() {
+			// See if it matches our format
+			let m = input.split('\t')
+			if (m) {
+				if (m.length > 0)
+					grammarState.grammar = m[0]
+				if (m.length > 1)
+					grammarState.structure = m[1]
+				if (m.length > 2)
+					grammarState.meaning = m[2]
+				if (m.length > 3)
+					grammarState.example = m[3]
+			}
+		}, 0);
+	}
 }
 
 
