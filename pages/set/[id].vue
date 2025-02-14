@@ -122,7 +122,7 @@ const handleDeleteWord = (cardId:number) => {
                 <UInput v-model="state.currentEditingCard.pronunciation" class="mb-3" autocomplete="off" spellcheck="false"/>
             </UFormGroup>
             <UFormGroup v-if="'structure' in state.currentEditingCard" label="Structure" name="structure">
-                <UInput v-model="state.currentEditingCard.structure" class="mb-3" autocomplete="off" spellcheck="false"/>
+                <UTextarea v-model="state.currentEditingCard.structure" class="mb-3" autocomplete="off" spellcheck="false"/>
             </UFormGroup>
             <UFormGroup label="Meaning" name="meaning">
                 <UTextarea v-model="state.currentEditingCard.meaning" class="mb-3" autocomplete="off" spellcheck="false"/>

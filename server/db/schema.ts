@@ -49,7 +49,7 @@ export const kanjisTable = pgTable("kanjis", {
 export const grammarsTable = pgTable("grammars", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     grammar: varchar({ length: 255 }).notNull(),
-    structure: varchar({ length: 255 }),
+    structure: text(),
     meaning: text().notNull(),
     example: text(),
     set_id: integer().references(() => setsTable.id),

@@ -195,9 +195,11 @@ defineShortcuts({
             </template>
 
             <div class="overflow-y-auto h-64">
-                <div class="">
-                    <div class="text-xl">{{ cardList[currentCardIndex].structure }}</div>
+                <div class="flex flex-row gap-x-10 gap-y-2 max-md:flex-col">
                     <div class="text-xl">{{ cardList[currentCardIndex].meaning }}</div>
+                    <div class="flex justify-start">
+                        <div class="text-xl whitespace-pre-wrap border-2 p-2 border-indigo-500 rounded-xl">{{ cardList[currentCardIndex].structure }}</div>
+                    </div> 
                 </div>
                 <UDivider class="h-4"/>
                 <div class="">
@@ -254,7 +256,7 @@ defineShortcuts({
             <UInput v-model="state.currentEditingCard.grammar" class="mb-3" :autofocus="true" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
         <UFormGroup label="Structure" name="structure">
-            <UInput v-model="state.currentEditingCard.structure" class="mb-3" autocomplete="off" spellcheck="false"/>
+            <UTextarea v-model="state.currentEditingCard.structure" class="mb-3" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
         <UFormGroup label="Meaning" name="meaning">
             <UTextarea v-model="state.currentEditingCard.meaning" class="mb-3" autocomplete="off" spellcheck="false"/>
