@@ -147,10 +147,10 @@ defineShortcuts({
         </div>
         <UCard>
             <template #header>
-                <div v-if="questionType !== GrammarQuestionType.WordToMeaning" class="h-8 text-xl">
+                <div v-if="questionType !== GrammarQuestionType.WordToMeaning" class="text-xl whitespace-pre-wrap">
                     {{ cardList[currentCardIndex].meaning }}
                 </div>
-                <div v-else class="h-8 text-xl">
+                <div v-else class="text-xl whitespace-pre-wrap">
                     {{ cardList[currentCardIndex].grammar }}
                 </div>
             </template>

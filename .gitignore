@@ -96,3 +96,6 @@ sw.*
 
 # Nuxt font
 .data
+
+# drizzle
+drizzle
