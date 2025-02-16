@@ -196,7 +196,7 @@ defineShortcuts({
 
             <div class="overflow-y-auto h-64">
                 <div class="flex flex-row gap-x-10 gap-y-2 max-md:flex-col">
-                    <div class="text-xl">{{ cardList[currentCardIndex].meaning }}</div>
+                    <div class="text-xl whitespace-pre-wrap">{{ cardList[currentCardIndex].meaning }}</div>
                     <div class="flex justify-start">
                         <div class="text-xl whitespace-pre-wrap border-2 p-2 border-indigo-500 rounded-xl">{{ cardList[currentCardIndex].structure }}</div>
                     </div> 

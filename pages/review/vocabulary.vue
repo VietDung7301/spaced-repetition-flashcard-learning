@@ -257,7 +257,7 @@ defineShortcuts({
             <div class="overflow-y-auto h-64">
                 <div class="">
                     <div class="text-xl">{{ cardList[currentCardIndex].pronunciation }}</div>
-                    <div class="text-xl">{{ cardList[currentCardIndex].meaning }}</div>
+                    <div class="text-xl whitespace-pre-wrap">{{ cardList[currentCardIndex].meaning }}</div>
                 </div>
                 <UDivider class="h-4"/>
                 <div class="">
