@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     '/': { prerender: true },
   },
 
-  modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxt/fonts'],
+  modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxt/fonts', 'nuxt-tiptap-editor'],
 
   runtimeConfig: {
     DB_URL: process.env.DB_URL,
@@ -20,6 +20,10 @@ export default defineNuxtConfig({
     families: [
       { name: 'Noto Sans JP', provider: 'google' },
     ]
+  },
+
+  tiptap: {
+    prefix: 'Tiptap', //prefix for Tiptap imports, composables not included
   },
 
   compatibilityDate: '2024-12-13'

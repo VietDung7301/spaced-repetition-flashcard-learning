@@ -12,6 +12,7 @@
     "@nuxt/devtools": "^1.0.3",
     "drizzle-kit": "^0.30.0",
     "nuxt": "^3.8.2",
+    "nuxt-tiptap-editor": "^2.1.4",
     "tsx": "^4.19.2",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5"

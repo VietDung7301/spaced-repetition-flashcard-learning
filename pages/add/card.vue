@@ -55,6 +55,7 @@ const onChangeType = () => {
 
 const onPaste = (event:any) => {
 	let input = event.clipboardData.getData('text/plain') as string
+	const htmlData = event.clipboardData.getData('text/html')
 
 	if (cardType.value === SetType.vocabulary) {
 		setTimeout(function() {
@@ -72,20 +73,27 @@ const onPaste = (event:any) => {
 			}
 		}, 0);
 	} else if (cardType.value === SetType.grammar) {
-		setTimeout(function() {
-			// See if it matches our format
-			let m = input.split('\t')
-			if (m) {
-				if (m.length > 0)
-					grammarState.grammar = m[0]
-				if (m.length > 1)
-					grammarState.structure = m[1]
-				if (m.length > 2)
-					grammarState.meaning = m[2]
-				if (m.length > 3)
-					grammarState.example = m[3]
+		if (htmlData) {
+			event.preventDefault()
+			// Process HTML data from Excel
+			const tempDiv = document.createElement('div')
+			tempDiv.innerHTML = htmlData
+			
+			// Extract data from HTML table
+			const rows = tempDiv.querySelectorAll('tr')
+			if (rows.length > 0) {
+				const cells = rows[0].querySelectorAll('td, th')
+				const values = Array.from(cells).map(cell => {
+					// Preserve formatting like strikethrough
+					return cell.innerHTML
+				})
+				
+				if (values.length > 0) grammarState.grammar = values[0]
+				if (values.length > 1) grammarState.structure = values[1]
+				if (values.length > 2) grammarState.meaning = values[2]
+				if (values.length > 3) grammarState.example = values[3]
 			}
-		}, 0);
+		}
 	}
 }
 
@@ -253,13 +261,14 @@ const onSubmit = () => {
 					<div class="flex flex-row mb-5">
 						<div class="w-full">
 							<label for="structure" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">構造</label>
-							<textarea type="text" id="structure" v-model="grammarState.structure"
+							<!-- <textarea type="text" id="structure" v-model="grammarState.structure"
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
 															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
 															dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
 								placeholder="Vる + ことにする" 
 								spellcheck="false"
-								autocomplete="off"/>
+								autocomplete="off"/> -->
+							<TiptapEditor v-model="grammarState.structure" />
 						</div>
 					</div>
 					<div class="flex flex-row mb-5">
