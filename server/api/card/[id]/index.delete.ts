@@ -6,8 +6,8 @@ import { eq } from 'drizzle-orm';
 const db = drizzle(useRuntimeConfig().DB_URL);
 
 export default defineEventHandler( async(event) =>{
-    const cardId = getRouterParam(event, 'id') as unknown as number
-    const type = (getQuery(event).type) as number
+    const cardId = parseInt(getRouterParam(event, 'id') || '0', 10)
+    const type = parseInt(getQuery(event).type as string || '0', 10)
 
     try {
         if (type === SetType.vocabulary)
@@ -23,6 +23,7 @@ export default defineEventHandler( async(event) =>{
             })
         }
     } catch (exception) {
+        console.error('Delete card error:', exception);
         throw createError({
             statusCode: 400,
             statusMessage: 'Something went wrong!',
