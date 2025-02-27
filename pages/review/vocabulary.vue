@@ -313,7 +313,7 @@ defineShortcuts({
         <UFormGroup label="Word" name="word">
             <UInput v-model="state.currentEditingCard.word" class="mb-3" :autofocus="true" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
-        <UFormGroup label="Pronounciation" name="pronunciation">
+        <UFormGroup label="Pronunciation" name="pronunciation">
             <UInput v-model="state.currentEditingCard.pronunciation" class="mb-3" autocomplete="off" spellcheck="false"/>
         </UFormGroup>
         <UFormGroup label="Meaning" name="meaning">
