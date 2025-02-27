@@ -2,7 +2,9 @@
 import type { CardSet, VocabCard } from '~/types/type';
 const { user_id } = storeToRefs(useAuthStore());
 
-const cardList = ref<VocabCard[]>()
+const dueVocab = ref()
+const dueGrammar = ref()
+const dueKanji = ref()
 const setList = ref<CardSet[]>()
 
 $fetch<CardSet[]>(`/api/card_set?user_id=${user_id.value}`, {
@@ -11,10 +13,12 @@ $fetch<CardSet[]>(`/api/card_set?user_id=${user_id.value}`, {
     setList.value = value
 })
 
-$fetch<VocabCard[]>(`/api/card/vocabulary/due?user_id=${user_id.value}`, {
+$fetch(`/api/card/due?user_id=${user_id.value}`, {
     method: "GET",
 }).then(value => {
-    cardList.value = value
+    dueVocab.value = value.vocab
+    dueGrammar.value = value.grammar
+    dueKanji.value = value.kanji
 })
 </script>
 
@@ -39,9 +43,37 @@ $fetch<VocabCard[]>(`/api/card/vocabulary/due?user_id=${user_id.value}`, {
                 <p class="text-2xl font-bold">Need to review</p>
             </div>
             <div class="grid grid-cols-4 max-sm:grid-cols-2 gap-4">
-                <div v-for="card in cardList" class="basis-1/4">
-                    <UCard class="flex flex-col justify-center">
-                        <p class="h-40 content-center text-center text-xl">{{ card.word }}</p>
+                <div class="basis-1/4">
+                    <UCard class="flex flex-col justify-center hover:cursor-pointer" @click="navigateTo(`/review/vocabulary`)">
+                        <div class="flex flex-row gap-4">
+                            <UIcon name="i-tabler:vocabulary" class="w-10 h-10 text-green-600" />
+                            <span class="text-xl flex flex-row justify-between items-center w-full">
+                                <div>Vocabulary</div> 
+                                <div>{{ dueVocab }}</div>
+                            </span>
+                        </div>
+                    </UCard>
+                </div>
+                <div class="basis-1/4">
+                    <UCard class="flex flex-col justify-center hover:cursor-pointer" @click="navigateTo(`/review/grammar`)">
+                        <div class="flex flex-row gap-4">
+                            <UIcon name="i-tabler:text-grammar" class="w-10 h-10 text-green-600" />
+                            <span class="text-xl flex flex-row justify-between items-center w-full">
+                                <div>Grammar</div> 
+                                <div>{{ dueGrammar }}</div>
+                            </span>
+                        </div>
+                    </UCard>
+                </div>
+                <div class="basis-1/4">
+                    <UCard class="flex flex-col justify-center hover:cursor-pointer" @click="navigateTo(`/review/kanji`)">
+                        <div class="flex flex-row gap-4">
+                            <UIcon name="i-uil:letter-chinese-a" class="w-10 h-10 text-green-600" />
+                            <span class="text-xl flex flex-row justify-between items-center w-full">
+                                <div>Kanji</div> 
+                                <div>{{ dueKanji }}</div>
+                            </span>
+                        </div>
                     </UCard>
                 </div>
             </div>
