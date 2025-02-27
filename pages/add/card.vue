@@ -268,7 +268,7 @@ const onSubmit = () => {
 								placeholder="Vる + ことにする" 
 								spellcheck="false"
 								autocomplete="off"/> -->
-							<TiptapEditor v-model="grammarState.structure" />
+							<TiptapEditor v-model="grammarState.structure"/>
 						</div>
 					</div>
 					<div class="flex flex-row mb-5">
@@ -371,11 +371,6 @@ const onSubmit = () => {
 				</div>
 			</div>
 		</form>
-
-
-
-
-
-
 	</div>
 </template>
+

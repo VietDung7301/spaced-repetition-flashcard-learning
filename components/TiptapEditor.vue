@@ -1,25 +1,25 @@
 <template>
-	<div v-if="editor" class="mb-2 flex space-x-2 border-b pb-2">
+	<div v-if="editor" class="mb-2 flex space-x-2 border-b">
 		<button 
 			@click="editor.chain().focus().toggleBold().run()"
 			:disabled="!editor.can().chain().focus().toggleBold().run()" 
 			:class="{ 'bg-gray-100': editor.isActive('bold') }"
-			class="p-2 rounded hover:bg-gray-200 transition-colors">
-			<UIcon name="i-material-symbols:format-bold"></UIcon>
+			class="rounded hover:bg-gray-200 transition-colors">
+			<UIcon name="i-material-symbols:format-bold" class="w-5 h-5"></UIcon>
 		</button>
 		<button 
 			@click="editor.chain().focus().toggleItalic().run()"
 			:disabled="!editor.can().chain().focus().toggleItalic().run()"
 			:class="{ 'bg-gray-100': editor.isActive('italic') }"
-			class="p-2 rounded hover:bg-gray-200 transition-colors">
-			<UIcon name="i-material-symbols:format-italic"></UIcon>
+			class="rounded hover:bg-gray-200 transition-colors">
+			<UIcon name="i-material-symbols:format-italic" class="w-5 h-5"></UIcon>
 		</button>
 		<button 
 			@click="editor.chain().focus().toggleStrike().run()"
 			:disabled="!editor.can().chain().focus().toggleStrike().run()"
 			:class="{ 'bg-gray-100': editor.isActive('strike') }"
-			class="p-2 rounded hover:bg-gray-200 transition-colors">
-			<UIcon name="i-material-symbols:format-strikethrough"></UIcon>
+			class="rounded hover:bg-gray-200 transition-colors">
+			<UIcon name="i-material-symbols:format-strikethrough" class="w-5 h-5"></UIcon>
 		</button>
 	</div>
 	<editor-content :editor="editor" class="" />
@@ -80,10 +80,3 @@ export default {
 	},
 }
 </script>
-
-<style module>
-.tiptap {
-	padding: 1rem;
-	border: 1px solid #e2e8f0;
-}
-</style>
