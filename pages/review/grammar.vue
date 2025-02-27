@@ -195,10 +195,13 @@ defineShortcuts({
             </template>
 
             <div class="overflow-y-auto h-64">
-                <div class="flex flex-row gap-x-10 gap-y-2 max-md:flex-col">
+                <div class="flex flex-col gap-y-4">
                     <div class="text-xl whitespace-pre-wrap">{{ cardList[currentCardIndex].meaning }}</div>
                     <div class="flex justify-start">
-                        <div class="text-xl whitespace-pre-wrap border-2 p-2 border-indigo-500 rounded-xl">{{ cardList[currentCardIndex].structure }}</div>
+                        <div v-if="cardList[currentCardIndex].structure"
+                            class="text-xl whitespace-pre-wrap border-2 px-4 py-3 border-indigo-500 rounded-3xl sm:ml-16 sm:px-16"
+                            v-html="cardList[currentCardIndex].structure">
+                        </div>
                     </div> 
                 </div>
                 <UDivider class="h-4"/>
