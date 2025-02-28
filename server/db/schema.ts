@@ -25,9 +25,9 @@ export const vocabulariesTable = pgTable("cards", {
     interval: integer().default(0).notNull(),
     ease_factor: real().default(1.3).notNull(),
     next_study_time: timestamp({mode: "date"}).defaultNow().notNull()
-}, (t) => [{
-    unq: unique("card_word_constraint").on(t.word, t.set_id)
-}])
+}, (t) => [
+    unique("card_word_constraint").on(t.word, t.set_id)
+])
 
 export const kanjisTable = pgTable("kanjis", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -42,9 +42,9 @@ export const kanjisTable = pgTable("kanjis", {
     interval: integer().default(0).notNull(),
     ease_factor: real().default(1.3).notNull(),
     next_study_time: timestamp({mode: "date"}).defaultNow().notNull()
-}, (t) => [{
-    unq: unique("kanji_constraint").on(t.word, t.set_id)
-}])
+}, (t) => [
+    unique("kanji_constraint").on(t.word, t.set_id)
+])
 
 export const grammarsTable = pgTable("grammars", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -58,6 +58,6 @@ export const grammarsTable = pgTable("grammars", {
     interval: integer().default(0).notNull(),
     ease_factor: real().default(1.3).notNull(),
     next_study_time: timestamp({mode: "date"}).defaultNow().notNull()
-}, (t) => [{
-    unq: unique("grammar_constraint").on(t.grammar, t.set_id)
-}])
+}, (t) => [
+    unique("grammar_constraint").on(t.grammar, t.set_id)
+])
