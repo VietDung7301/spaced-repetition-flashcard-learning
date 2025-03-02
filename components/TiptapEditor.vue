@@ -4,21 +4,24 @@
 			@click="editor.chain().focus().toggleBold().run()"
 			:disabled="!editor.can().chain().focus().toggleBold().run()" 
 			:class="{ 'bg-gray-100': editor.isActive('bold') }"
-			class="rounded hover:bg-gray-200 transition-colors">
+			class="rounded hover:bg-gray-200 transition-colors"
+			tabindex="-1" >
 			<UIcon name="i-material-symbols:format-bold" class="w-5 h-5"></UIcon>
 		</button>
 		<button 
 			@click="editor.chain().focus().toggleItalic().run()"
 			:disabled="!editor.can().chain().focus().toggleItalic().run()"
 			:class="{ 'bg-gray-100': editor.isActive('italic') }"
-			class="rounded hover:bg-gray-200 transition-colors">
+			class="rounded hover:bg-gray-200 transition-colors"
+			tabindex="-1" >
 			<UIcon name="i-material-symbols:format-italic" class="w-5 h-5"></UIcon>
 		</button>
 		<button 
 			@click="editor.chain().focus().toggleStrike().run()"
 			:disabled="!editor.can().chain().focus().toggleStrike().run()"
 			:class="{ 'bg-gray-100': editor.isActive('strike') }"
-			class="rounded hover:bg-gray-200 transition-colors">
+			class="rounded hover:bg-gray-200 transition-colors"
+			tabindex="-1" >
 			<UIcon name="i-material-symbols:format-strikethrough" class="w-5 h-5"></UIcon>
 		</button>
 	</div>
