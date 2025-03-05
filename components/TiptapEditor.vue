@@ -1,28 +1,28 @@
 <template>
-	<div v-if="editor" class="mb-2 flex space-x-2 border-b">
+	<div v-if="editor" class="flex gap-x-1 border-gray-50 dark:border-gray-800 dark:bg-gray-800 bg-gray-100 pl-2 rounded-t-md pt-1">
 		<button 
 			@click="editor.chain().focus().toggleBold().run()"
 			:disabled="!editor.can().chain().focus().toggleBold().run()" 
-			:class="{ 'bg-gray-100': editor.isActive('bold') }"
-			class="rounded hover:bg-gray-200 transition-colors"
+			:class="{ 'bg-gray-200 dark:bg-gray-700': editor.isActive('bold') }"
+			class="rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
 			tabindex="-1" >
-			<UIcon name="i-material-symbols:format-bold" class="w-5 h-5"></UIcon>
+			<UIcon name="i-material-symbols:format-bold" class="w-4 h-4 text-gray-400 dark:text-gray-500"></UIcon>
 		</button>
 		<button 
 			@click="editor.chain().focus().toggleItalic().run()"
 			:disabled="!editor.can().chain().focus().toggleItalic().run()"
-			:class="{ 'bg-gray-100': editor.isActive('italic') }"
-			class="rounded hover:bg-gray-200 transition-colors"
+			:class="{ 'bg-gray-200 dark:bg-gray-700': editor.isActive('italic') }"
+			class="rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
 			tabindex="-1" >
-			<UIcon name="i-material-symbols:format-italic" class="w-5 h-5"></UIcon>
+			<UIcon name="i-material-symbols:format-italic" class="w-4 h-4 text-gray-400 dark:text-gray-500"></UIcon>
 		</button>
 		<button 
 			@click="editor.chain().focus().toggleStrike().run()"
 			:disabled="!editor.can().chain().focus().toggleStrike().run()"
-			:class="{ 'bg-gray-100': editor.isActive('strike') }"
-			class="rounded hover:bg-gray-200 transition-colors"
+			:class="{ 'bg-gray-200 dark:bg-gray-700': editor.isActive('strike') }"
+			class="rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
 			tabindex="-1" >
-			<UIcon name="i-material-symbols:format-strikethrough" class="w-5 h-5"></UIcon>
+			<UIcon name="i-material-symbols:format-strikethrough" class="w-4 h-4 text-gray-400 dark:text-gray-500"></UIcon>
 		</button>
 	</div>
 	<editor-content :editor="editor" class="" />

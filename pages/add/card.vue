@@ -296,7 +296,7 @@ const onSubmit = () => {
 <template>
 	<div class="flex flex-wrap  w-screen justify-center content-center mt-6">
 		<form class="w-3/5 mx-auto max-sm:w-11/12">
-			<div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+			<div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700">
 				<div class="flex flex-row gap-4">
 					<div class="w-1/2">
 						<UFormGroup label="Select type">
@@ -331,11 +331,11 @@ const onSubmit = () => {
 				<div v-if="cardType === SetType.vocabulary">
 					<div class="flex flex-row mb-5 gap-4">
 						<div class="w-1/2">
-							<label for="kanji" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">漢字</label>
+							<label for="kanji" class="text-md font-semibold text-green-800 dark:text-green-600">Word</label>
 							<input type="text" id="kanji" v-model="vocabularyState.word"
 								@paste="onPaste"
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 
 															dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
 								placeholder="漢字"
 								spellcheck="false"
@@ -343,10 +343,10 @@ const onSubmit = () => {
 								required />
 						</div>
 						<div class="w-1/2">
-							<label for="read" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">読み方</label>
+							<label for="read" class="text-md font-semibold text-green-800 dark:text-green-600">Pronunciation</label>
 							<input type="text" id="read" v-model="vocabularyState.pronunciation"
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 
 															dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
 								placeholder="かんじ" 
 								spellcheck="false"
@@ -355,21 +355,21 @@ const onSubmit = () => {
 					</div>
 					<div class="flex flex-row mb-5">
 						<div class="w-full">
-							<label for="meaning" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">意味</label>
+							<label for="meaning" class="text-md font-semibold text-green-800 dark:text-green-600">Meaning</label>
 							<textarea type="text" id="meaning" v-model="vocabularyState.meaning"
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 
 															dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
 								spellcheck="false"/>
 						</div>
 					</div>
 					<div class="flex flex-row">
 						<div class="w-full">
-							<label for="example" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">例</label>
-							<div class="mt-2">
+							<label for="example" class="text-md font-semibold text-green-800 dark:text-green-600">Example</label>
+							<div>
 								<textarea name="example" id="example" rows="2" v-model="vocabularyState.example"
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 
 															dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 								spellcheck="false" />
 							</div>
@@ -379,11 +379,11 @@ const onSubmit = () => {
 				<div v-else-if="cardType === SetType.grammar">
 					<div class="flex flex-row mb-5 gap-4">
 						<div class="w-full">
-							<label for="grammar" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">文法</label>
+							<label for="grammar" class="text-md font-semibold text-green-800 dark:text-green-600">Grammar</label>
 							<input type="text" id="grammar" v-model="grammarState.grammar"
 								@paste="onPaste"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+								class="bg-gray-100 text-gray-900 text-sm rounded-lg 
+															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-800
 															dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
 								placeholder="～ことにする"
 								spellcheck="false"
@@ -393,30 +393,25 @@ const onSubmit = () => {
 					</div>
 					<div class="flex flex-row mb-5">
 						<div class="w-full">
-							<label for="structure" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">構造</label>
-							<TiptapEditor v-model="grammarState.structure"/>
+							<label for="structure" class="text-md font-semibold text-green-800 dark:text-green-600">Structure</label>
+							<div class="text-sm">
+								<TiptapEditor v-model="grammarState.structure"/>
+							</div>
 						</div>
 					</div>
 					<div class="flex flex-row mb-5">
 						<div class="w-full">
-							<label for="meaning" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">意味</label>
-							<textarea type="text" id="meaning" v-model="grammarState.meaning"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
-															dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-								spellcheck="false"
-								required/>
+							<label for="meaning" class="text-md font-semibold text-green-800 dark:text-green-600">Meaning</label>
+							<div class="text-sm">
+								<TiptapEditor v-model="grammarState.meaning"/>
+							</div>
 						</div>
 					</div>
 					<div class="flex flex-row">
 						<div class="w-full">
-							<label for="example" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">例</label>
-							<div class="mt-2">
-								<textarea name="example" id="example" rows="2" v-model="grammarState.example"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
-															dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-								spellcheck="false" />
+							<label for="example" class="text-md font-semibold text-green-800 dark:text-green-600">Example</label>
+							<div class="text-sm">
+								<TiptapEditor v-model="grammarState.example"/>
 							</div>
 						</div>
 					</div>
@@ -424,11 +419,11 @@ const onSubmit = () => {
 				<div v-else>
 					<div class="flex flex-row mb-5 gap-4">
 						<div class="w-full">
-							<label for="kanji" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">漢字</label>
+							<label for="kanji" class="text-md font-semibold text-green-800 dark:text-green-600">Kanji</label>
 							<input type="text" id="kanji" v-model="kanjiState.word"
 								@paste="onPaste"
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 
 															dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
 								placeholder="漢字"
 								spellcheck="false"
@@ -438,10 +433,10 @@ const onSubmit = () => {
 					</div>
 					<div class="flex flex-row mb-5 gap-4">
 						<div class="w-full">
-							<label for="read" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">読み方</label>
+							<label for="read" class="text-md font-semibold text-green-800 dark:text-green-600">Pronunciation</label>
 							<textarea type="text" id="read" v-model="kanjiState.pronunciation"
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 
 															dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
 								placeholder="かんじ" 
 								spellcheck="false"
@@ -450,10 +445,10 @@ const onSubmit = () => {
 					</div>
 					<div class="flex flex-row mb-5">
 						<div class="w-full">
-							<label for="meaning" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">意味</label>
+							<label for="meaning" class="text-md font-semibold text-green-800 dark:text-green-600">Meaning</label>
 							<textarea type="text" id="meaning" v-model="kanjiState.meaning"
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 
 															dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
 								spellcheck="false"
 								required/>
@@ -461,21 +456,21 @@ const onSubmit = () => {
 					</div>
 					<div class="flex flex-row mb-5">
 						<div class="w-full">
-							<label for="remember" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">覚える方</label>
+							<label for="remember" class="text-md font-semibold text-green-800 dark:text-green-600">How to remember</label>
 							<textarea type="text" id="remember" v-model="kanjiState.how_to_remember"
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 
 															dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
 								spellcheck="false"/>
 						</div>
 					</div>
 					<div class="flex flex-row">
 						<div class="w-full">
-							<label for="example" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">例</label>
-							<div class="mt-2">
+							<label for="example" class="text-md font-semibold text-green-800 dark:text-green-600">Example</label>
+							<div>
 								<textarea name="example" id="example" rows="2" v-model="kanjiState.example"
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+															focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 
 															dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 								spellcheck="false" />
 							</div>
@@ -565,7 +560,7 @@ const onSubmit = () => {
 					<tbody class="bg-white dark:bg-gray-800">
 						<tr v-for="(card, index) in insertedCards" 
 							:key="index" 
-							:class="[{ 'bg-gray-50 dark:bg-gray-700': selectedRows[index] }, { 'bg-red-200 dark:bg-rose-600': invalidRows[index] }]"
+							:class="[{ 'bg-gray-50 dark:bg-gray-800': selectedRows[index] }, { 'bg-red-200 dark:bg-rose-600': invalidRows[index] }]"
 							@click="selectedRows[index] = !selectedRows[index]"
 							class="cursor-pointer">
 							<td class="border-b border-gray-100 p-4 pl-4 dark:border-gray-700" @click.stop>

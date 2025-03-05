@@ -16,8 +16,19 @@ useHead({
     font-family: "Noto Sans JP", Roboto, sans-serif;
   }
   .tiptap {
-    padding: 1rem;
-    border: 1px solid #7a7a7a;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+    border-top: 1px solid rgba(209, 213, 219, 1);
     border-radius: 0.5rem;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    background-color: rgba(243, 244, 246, 1);
+  }
+  
+  :root.dark .tiptap {
+    border-top: 1px solid rgba(55, 65, 81, 1);
+    background-color: rgba(31, 41, 55, 1);
   }
 </style>

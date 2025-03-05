@@ -174,11 +174,12 @@ defineShortcuts({
         </div>
         <UCard>
             <template #header>
-                <div v-if="questionType !== VocabularyQuestionType.WordToMeaningChose" class="text-xl whitespace-pre-wrap">
-                    {{ cardList[currentCardIndex].meaning }}
+                <div v-if="questionType !== VocabularyQuestionType.WordToMeaningChose" 
+                    class="text-xl whitespace-pre-wrap"
+                    v-html="cardList[currentCardIndex].meaning">
                 </div>
-                <div v-else class="text-xl whitespace-pre-wrap">
-                    {{ cardList[currentCardIndex].word }}
+                <div v-else class="text-xl whitespace-pre-wrap"
+                    v-html="cardList[currentCardIndex].word">
                 </div>
             </template>
 
@@ -188,8 +189,8 @@ defineShortcuts({
                         class="h-36 flex items-center justify-center text-xl text-black dark:text-white shadow-md border-slate-300 border dark:border-slate-700"
                         :key="idx"
                         :class="option.bg_color"
-                        @click="handleChoseAnswer(option)">
-                        {{ option.word }}
+                        @click="handleChoseAnswer(option)"
+                        v-html="option.word">
                     </UButton>
                 </div>
             </div>
@@ -199,8 +200,8 @@ defineShortcuts({
                         class="h-36 flex items-center justify-center text-xl text-black dark:text-white shadow-md border-slate-300 border dark:border-slate-700"
                         :key="idx"
                         :class="option.bg_color"
-                        @click="handleChoseAnswer(option)">
-                        {{ option.meaning }}
+                        @click="handleChoseAnswer(option)"
+                        v-html="option.meaning">
                     </UButton>
                 </div>
             </div>
@@ -243,7 +244,7 @@ defineShortcuts({
         <UCard>
             <template #header>
             <div class="flex items-center justify-between">
-                <div class="text-3xl text-green-800 dark:text-green-400 mb-2">{{ cardList[currentCardIndex].word }}</div>
+                <div class="text-3xl text-green-800 dark:text-green-400 mb-2" v-html="cardList[currentCardIndex].word"></div>
                 <div class="gap-4 flex">
                     <UButton color="gray" icon="i-heroicons-pencil-square" @click="handleClickEdit(cardList[currentCardIndex])">
                     </UButton>
@@ -256,14 +257,14 @@ defineShortcuts({
 
             <div class="overflow-y-auto h-64">
                 <div class="">
-                    <div class="text-xl">{{ cardList[currentCardIndex].pronunciation }}</div>
-                    <div class="text-xl whitespace-pre-wrap">{{ cardList[currentCardIndex].meaning }}</div>
+                    <div class="text-xl" v-html="cardList[currentCardIndex].pronunciation"></div>
+                    <div class="text-xl whitespace-pre-wrap" v-html="cardList[currentCardIndex].meaning"></div>
                 </div>
                 <UDivider class="h-4"/>
                 <div class="">
                     <div v-if="cardList[currentCardIndex].example">
                         <div class="text-green-800 dark:text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> Example</div>
-                        <div class="whitespace-pre-wrap">{{cardList[currentCardIndex].example}}</div>
+                        <div class="whitespace-pre-wrap" v-html="cardList[currentCardIndex].example"></div>
                     </div>
                     <div v-if="cardList[currentCardIndex].exampleAI">
                         <div class="text-green-800 dark:text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> AI generated example</div>
@@ -294,34 +295,43 @@ defineShortcuts({
     <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
     <template #header>
         <div class="flex items-center justify-between">
-        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+        <h3 class="text-xl font-semibold leading-6 text-gray-900 dark:text-white">
             Edit
         </h3>
         <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="isEdit = false" />
         </div>
     </template>
     <div>
-        <UFormGroup label="Select set" class="mb-5 mr-5 w-1/2">
-            <USelect 
-                color="gray"
-                v-model="state.currentEditingCard.set_id" 
-                :options="setList"
-                option-attribute="name"
-                value-attribute="id">
-            </USelect>
-        </UFormGroup>
-        <UFormGroup label="Word" name="word">
-            <UInput v-model="state.currentEditingCard.word" class="mb-3" :autofocus="true" autocomplete="off" spellcheck="false"/>
-        </UFormGroup>
-        <UFormGroup label="Pronunciation" name="pronunciation">
-            <UInput v-model="state.currentEditingCard.pronunciation" class="mb-3" autocomplete="off" spellcheck="false"/>
-        </UFormGroup>
-        <UFormGroup label="Meaning" name="meaning">
-            <UTextarea v-model="state.currentEditingCard.meaning" class="mb-3" autocomplete="off" spellcheck="false"/>
-        </UFormGroup>
-        <UFormGroup label="Example" name="example">
-            <UTextarea v-model="state.currentEditingCard.example" class="mb-3" autocomplete="off" spellcheck="false"/>
-        </UFormGroup>
+        <label class="text-md font-semibold text-green-800 dark:text-green-600">Select set</label>
+        <USelect 
+            color="gray"
+            v-model="state.currentEditingCard.set_id" 
+            :options="setList"
+            option-attribute="name"
+            value-attribute="id"
+            class="mb-3">
+        </USelect>
+
+        <label class="text-md font-semibold text-green-800 dark:text-green-600">Word</label>
+        <div class="mb-3">
+            <TiptapEditor v-model="state.currentEditingCard.word"/>
+        </div>
+
+        <label class="text-md font-semibold text-green-800 dark:text-green-600">Pronunciation</label>
+        <div class="mb-3">
+            <TiptapEditor v-model="state.currentEditingCard.pronunciation"/>
+        </div>
+
+        <label class="text-md font-semibold text-green-800 dark:text-green-600">Meaning</label>
+        <div class="mb-3">
+            <TiptapEditor v-model="state.currentEditingCard.meaning"/>
+        </div>
+
+        <label class="text-md font-semibold text-green-800 dark:text-green-600">Example</label>
+        <div class="mb-7">
+            <TiptapEditor v-model="state.currentEditingCard.example"/>
+        </div>
+
         <UButton icon="mingcute:check-circle-fill" type="submit" @click="handleUpdateWord">Submit</UButton>
     </div>
     </UCard>
