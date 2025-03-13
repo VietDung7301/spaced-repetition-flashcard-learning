@@ -12,7 +12,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     DB_URL: process.env.DB_URL,
     public: {
-      GEMINI_API_KEY: process.env.GEMINI_API_KEY
+      GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+      VOICE_URL: process.env.VOICE_URL,
     }
   },
 

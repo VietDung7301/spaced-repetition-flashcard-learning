@@ -8,10 +8,20 @@ const toast = useToast()
 const genAI = new GoogleGenerativeAI(useRuntimeConfig().public.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 const { user_id } = storeToRefs(useAuthStore());
+const speakerId = 13
+const voiceURL = useRuntimeConfig().public.VOICE_URL
 
 const cardList = ref()
 const currentOptionList = ref<GrammarQuestionOption[]>()
 const isShowFullWord = ref(false)
+
+
+// Add functionality to generate audio from selected text
+const selectedText = ref('')
+const showAudioButton = ref(false)
+const audioButtonPosition = ref({ x: 0, y: 0 })
+
+const copiedAudioElement = ref<HTMLAudioElement>()
 
 const getWordExampleByAI = async (grammar: string) => {
     return model.generateContent(`
@@ -62,6 +72,82 @@ for (let card of cardList.value) {
             option.bg_color = {"bg-white dark:bg-slate-900": true}
         }
     })
+}
+
+const generateAudio = async (text: string) => {
+    try {
+        // Step 1: Query the audio query endpoint
+        const queryResponse = await fetch(`${voiceURL}/audio_query?text=${encodeURIComponent(text)}&speaker=${speakerId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        
+        if (!queryResponse.ok) {
+            throw new Error(`Failed to get audio query: ${queryResponse.status}`)
+        }
+        
+        const queryData = await queryResponse.json()
+        
+        // Step 2: Synthesize the audio
+        const synthesisResponse = await fetch(`${voiceURL}/synthesis?speaker=${speakerId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(queryData)
+        })
+        
+        if (!synthesisResponse.ok) {
+            throw new Error(`Failed to synthesize audio: ${synthesisResponse.status}`)
+        }
+        
+        // Convert the audio blob to a URL and play it automatically
+        const audioBlob = await synthesisResponse.blob()
+        return URL.createObjectURL(audioBlob)
+    } catch (err:any) {
+        toast.add({title: "Error", description: err.message, color: 'red'})
+        console.error('TTS Error:', err)
+    }
+}
+
+
+const generateSelectedTextAudio = () => {
+    console.log("selectedText", selectedText.value)
+    if (selectedText.value) {
+        console.log("Generating audio for selected text:", selectedText.value)
+        generateAudio(selectedText.value).then((url: string | undefined) => {
+            if (url) {
+                copiedAudioElement.value?.pause()
+                copiedAudioElement.value?.remove()
+                copiedAudioElement.value = new Audio(url)
+                copiedAudioElement.value.play()
+            }
+        })
+    }
+    showAudioButton.value = false
+}
+
+// Handle text selection
+const handleTextSelection = () => {
+    const selection = window.getSelection()
+    console.log("selection", selection)
+    if (selection && selection.toString().trim()) {
+        selectedText.value = selection.toString().trim()
+        console.log("selectedText", selectedText.value)
+        showAudioButton.value = true
+        
+        // Calculate position for the audio button near the selection
+        const range = selection.getRangeAt(0)
+        const rect = range.getBoundingClientRect()
+        audioButtonPosition.value = {
+            x: rect.right + window.scrollX,
+            y: rect.top + window.scrollY
+        }
+    } else {
+        showAudioButton.value = false
+    }
 }
 
 const handleChoseAnswer = (option: GrammarQuestionOption) => {
@@ -133,9 +219,28 @@ defineShortcuts({
     handler: () => handleNextCard()
   }
 })
+
+// Add event listener for text selection
+onMounted(() => {
+    document.addEventListener('mouseup', handleTextSelection)
+    // document.addEventListener('keyup', handleTextSelection)
+})
+
+// Remove event listener on component unmount
+onUnmounted(() => {
+    document.removeEventListener('mouseup', handleTextSelection)
+    // document.removeEventListener('keyup', handleTextSelection)
+})
 </script>
 
 <template>
+<!-- Floating audio button that appears when text is selected -->
+<div v-if="showAudioButton" 
+    class="fixed z-50 p-2 bg-white dark:bg-slate-800 rounded-full shadow-lg cursor-pointer animate-fade-in flex items-center justify-center"
+    :style="`left: ${audioButtonPosition.x}px; top: ${audioButtonPosition.y - 30}px;`"
+    v-on:mousedown="generateSelectedTextAudio()">
+    <UIcon name="i-heroicons-speaker-wave" class="text-primary-500 w-5 h-5" />
+</div>
 <div v-if="cardList?.length > currentCardIndex" class="w-full flex justify-center pt-10">
     <div class="flex flex-col w-3/4 gap-y-8 max-sm:w-full">
         <div class="grid grid-cols-12 gap-2">
