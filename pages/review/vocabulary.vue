@@ -301,10 +301,10 @@ onUnmounted(() => {
         <UCard>
             <template #header>
                 <div v-if="questionType !== VocabularyQuestionType.WordToMeaningChose" 
-                    class="text-xl"
+                    class="text-xl whitespace-pre-wrap"
                     v-html="cardList[currentCardIndex].meaning">
                 </div>
-                <div v-else class="text-xl"
+                <div v-else class="text-xl whitespace-pre-wrap"
                     v-html="cardList[currentCardIndex].word">
                 </div>
             </template>
@@ -387,13 +387,13 @@ onUnmounted(() => {
             <div class="overflow-y-auto h-64">
                 <div class="">
                     <div class="text-xl" v-html="cardList[currentCardIndex].pronunciation"></div>
-                    <div class="text-xl" v-html="cardList[currentCardIndex].meaning"></div>
+                    <div class="text-xl whitespace-pre-wrap" v-html="cardList[currentCardIndex].meaning"></div>
                 </div>
                 <UDivider class="h-4"/>
                 <div class="">
                     <div v-if="cardList[currentCardIndex].example">
                         <div class="text-green-800 dark:text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> Example</div>
-                        <div v-html="cardList[currentCardIndex].example"></div>
+                        <div class="whitespace-pre-wrap" v-html="cardList[currentCardIndex].example"></div>
                     </div>
                     <div v-if="cardList[currentCardIndex].exampleAI">
                         <div class="text-green-800 dark:text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> AI generated example</div>
