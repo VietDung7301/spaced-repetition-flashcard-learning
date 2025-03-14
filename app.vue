@@ -25,6 +25,7 @@ useHead({
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     background-color: rgba(243, 244, 246, 1);
+    white-space: pre-wrap;
   }
   
   :root.dark .tiptap {

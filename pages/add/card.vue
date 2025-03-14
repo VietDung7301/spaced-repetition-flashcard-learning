@@ -145,7 +145,7 @@ const onPasteMultiple = (event:any) => {
 				const cells = row.querySelectorAll('td, th')
 				const values = Array.from(cells).map(cell => {
 					// Preserve formatting like strikethrough
-					return cell.innerHTML
+					return cell.innerHTML.replace(/\n/g, '')
 				})
 				if (values.length > 0) {
 					if (!values[2] || !values[0]) {
@@ -566,7 +566,7 @@ const onSubmit = () => {
 							<td class="border-b border-gray-100 p-4 pl-4 dark:border-gray-700" @click.stop>
 								<UCheckbox v-model="selectedRows[index]" />
 							</td>
-							<td v-for="cell in card" class="border-b border-gray-100 p-4 pl-8 dark:border-gray-700" v-html="cell">
+							<td v-for="cell in card" class="border-b border-gray-100 p-4 pl-8 dark:border-gray-700 whitespace-pre-wrap" v-html="cell">
 							</td>
 						</tr>
 					</tbody>
