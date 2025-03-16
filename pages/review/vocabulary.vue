@@ -17,10 +17,21 @@ const audioUrl = ref<string | null>()
 const audioElement = ref<HTMLAudioElement>()
 const copiedAudioElement = ref<HTMLAudioElement>()
 
+let currentCardIndex = ref(0)
+let questionType = ref<VocabularyQuestionType>(randomEnum(VocabularyQuestionType))
+let userInput = ref('')
+let inputColor = ref('primary')
+let isEdit = ref(false)
+
+// Add functionality to generate audio from selected text
+const selectedText = ref('')
+const showAudioButton = ref(false)
+const audioButtonPosition = ref({ x: 0, y: 0 })
+
 const getWordExampleByAI = async (word: string) => {
     return model.generateContent(`
-        Hãy tìm cho tôi 2 câu có sử dụng từ ${word} trong báo hoặc hội thoại thường ngày.
-        Hãy chỉ gửi cho tôi câu bạn tìm được và không nhắn thêm bất cứ điều gì.
+        Bạn là một chuyên gia về tiếng Nhật với nhiều năm kinh nghiệm trong việc giảng dạy tiếng Nhật.
+        Nhiệm vụ của bạn là tìm 2 ví dụ về cách sử dụng từ ${word} trong câu tiếng Nhật.
         Câu trả lời được viết dưới dạng: 
             1. Câu tiếng Nhật
                 Cách đọc
@@ -29,13 +40,14 @@ const getWordExampleByAI = async (word: string) => {
                 Cách đọc
                 Ý nghĩa tiếng Việt.
         Trong đó, cách dọc được viết dưới dạng chữ hiragana. 
-        Ví dụ khi cần lấy ví dụ về từ 勉強 (べんきょう) thì câu trả lời sẽ là:
-            1. 勉強をするのが好きです。
+        Ví dụ khi cần lấy ví dụ về từ 勉強 thì câu trả lời sẽ là:
+            - 勉強をするのが好きです。
                 べんきょうをするのがすきです。
                 Tôi thích học.
-            2. 今日は勉強しないで遊びます。
+            - 今日は勉強しないで遊びます。
                 きょうはべんきょうしないであそびます。
                 Hôm nay tôi không học mà tôi đi chơi.
+        Lưu ý, hãy chỉ đưa ra ví dụ và không nhắn thêm bất kỳ thông điệp nào khác.
     `)
 }
 
@@ -109,47 +121,52 @@ const playWordAudio = () => {
     audioElement.value?.play()
 }
 
+const getQuestion = async (card: VocabCardQuestion) => {
+    card.options = await $fetch<VocabQuestionOption[]>(`/api/card/vocabulary/question_option?word=${card.word}&meaning=${card.meaning}&id=${card.id}&user_id=${user_id.value}`, {
+        method: 'GET'
+    })
+    
+    for (let option of card.options) {
+        option.bg_color = {"bg-white dark:bg-slate-900": true}
+    }
+    return card.options
+}
+
 const setList = await $fetch<CardSet[]>(`/api/card_set?user_id=${user_id.value}`, {
     method: "GET",
 })
 
-cardList.value = await $fetch<VocabCardQuestion[]>(`/api/card/vocabulary/due?user_id=${user_id.value}`, {
+$fetch<VocabCardQuestion[]>(`/api/card/vocabulary/due?user_id=${user_id.value}`, {
     method: "GET",
 })
-let currentCardIndex = ref(0)
-let questionType = ref<VocabularyQuestionType>(randomEnum(VocabularyQuestionType))
-let userInput = ref('')
-let inputColor = ref('primary')
-let isEdit = ref(false)
+.then((value: VocabCardQuestion[]) => {
+    cardList.value = value
 
-watchEffect(() => {
-    if (cardList.value && cardList.value.length > 0) {
+    if (cardList.value.length > 0) {
         getWordExampleByAI(
             cardList.value[currentCardIndex.value].word
         ).then((value: any) => {
             cardList.value[currentCardIndex.value].exampleAI = value.response.text().replaceAll("\n\n", "\n")
-        }).catch(error => {
-            console.error('Error getting word example:', error)
         })
 
         generateWordAudio(cardList.value[currentCardIndex.value].word)
+
+        let card = cardList.value[currentCardIndex.value]
+        getQuestion(card).then((options) => {
+            currentOptionList.value = options
+        })
+
+        if (currentCardIndex.value + 1 < cardList.value.length) {
+            card = cardList.value[currentCardIndex.value + 1]
+            getQuestion(card)
+        }
     }
 })
+.catch((error) => {
+    toast.add({title: "Error", description: error.message, color: 'red'})
+    console.error('Error getting due cards:', error)
+})
 
-
-for (let card of cardList.value) {
-    $fetch<VocabQuestionOption>(`/api/card/vocabulary/question_option?word=${card.word}&meaning=${card.meaning}&id=${card.id}&user_id=${user_id.value}`, {
-        method: 'GET'
-    }).then((value: VocabQuestionOption) => {
-        if (value !== null) {
-            card.options = value
-            currentOptionList.value = cardList.value[0].options
-        }
-        for (let option of card.options) {
-            option.bg_color = {"bg-white dark:bg-slate-900": true}
-        }
-    })
-}
 
 const handleSubmitAnswer = (isSubmit: boolean, event:any) => {
     event.target.blur();
@@ -206,6 +223,12 @@ const handleNextCard = () => {
             cardList.value[currentCardIndex.value].exampleAI = value.response.text().replaceAll("\n\n", "\n")
         })
     }
+
+    generateWordAudio(cardList.value[currentCardIndex.value].word)
+
+    if (currentCardIndex.value + 1 < cardList.value.length) {
+        getQuestion(cardList.value[currentCardIndex.value + 1])
+    }
 }
 
 const state = reactive({
@@ -241,10 +264,6 @@ defineShortcuts({
   }
 })
 
-// Add functionality to generate audio from selected text
-const selectedText = ref('')
-const showAudioButton = ref(false)
-const audioButtonPosition = ref({ x: 0, y: 0 })
 
 // Handle text selection
 const handleTextSelection = () => {

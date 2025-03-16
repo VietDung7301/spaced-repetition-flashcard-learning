@@ -23,6 +23,12 @@ const audioButtonPosition = ref({ x: 0, y: 0 })
 
 const copiedAudioElement = ref<HTMLAudioElement>()
 
+let currentCardIndex = ref(0)
+let questionType = ref<GrammarQuestionType>(randomEnum(GrammarQuestionType))
+let userInput = ref('')
+let inputColor = ref('primary')
+let isEdit = ref(false)
+
 const getWordExampleByAI = async (grammar: string) => {
     return model.generateContent(`
         Bạn là một chuyên gia về tiếng Nhật với nhiều năm kinh nghiệm trong việc giảng dạy và giải thích các quy tắc ngữ pháp cho người học. Bạn có khả năng cung cấp những ví dụ rõ ràng và dễ hiểu để người học có thể áp dụng vào giao tiếp hàng ngày.
@@ -38,41 +44,49 @@ const getWordExampleByAI = async (grammar: string) => {
     `)
 }
 
+const getQuestion = async (card: GrammarCardQuestion) => {
+    card.options = await $fetch<GrammarQuestionOption[]>(`/api/card/grammar/question_option?grammar=${card.grammar}&meaning=${card.meaning}&id=${card.id}&user_id=${user_id.value}`, {
+        method: 'GET'
+    })
+    
+    for (let option of card.options) {
+        option.bg_color = {"bg-white dark:bg-slate-900": true}
+    }
+    return card.options
+}
+
 const setList = await $fetch<CardSet[]>(`/api/card_set?user_id=${user_id.value}`, {
     method: "GET",
 })
 
-cardList.value = await $fetch<GrammarCardQuestion[]>(`/api/card/grammar/due?user_id=${user_id.value}`, {
+$fetch<GrammarCardQuestion[]>(`/api/card/grammar/due?user_id=${user_id.value}`, {
     method: "GET",
+}).then((value: GrammarCardQuestion[]) => {
+    cardList.value = value
+
+    if (cardList.value.length > 0) {
+        getWordExampleByAI(
+            cardList.value[currentCardIndex.value].grammar
+        ).then((value: any) => {
+            cardList.value[currentCardIndex.value].exampleAI = value.response.text().replaceAll("\n\n", "\n")
+        })
+
+        let card = cardList.value[currentCardIndex.value]
+        getQuestion(card).then((options) => {
+            currentOptionList.value = options
+        })
+
+        if (currentCardIndex.value + 1< cardList.value.length) {
+            card = cardList.value[currentCardIndex.value + 1]
+            getQuestion(card)
+        }
+    }
 })
-let currentCardIndex = ref(0)
-let questionType = ref<GrammarQuestionType>(randomEnum(GrammarQuestionType))
-let userInput = ref('')
-let inputColor = ref('primary')
-let isEdit = ref(false)
+.catch((err: any) => {
+    toast.add({title: "Error", description: err.message, color: 'red'})
+    console.error(err)
+})
 
-if (!empty(cardList.value)) {
-    getWordExampleByAI(
-        cardList.value[currentCardIndex.value].grammar
-    ).then((value: any) => {
-        cardList.value[currentCardIndex.value].exampleAI = value.response.text().replaceAll("\n\n", "\n")
-    })
-}
-
-
-for (let card of cardList.value) {
-    $fetch<GrammarQuestionOption>(`/api/card/grammar/question_option?grammar=${card.grammar}&meaning=${card.meaning}&id=${card.id}&user_id=${user_id.value}`, {
-        method: 'GET'
-    }).then((value: GrammarQuestionOption) => {
-        if (value !== null) {
-            card.options = value
-            currentOptionList.value = cardList.value[0].options
-        }
-        for (let option of card.options) {
-            option.bg_color = {"bg-white dark:bg-slate-900": true}
-        }
-    })
-}
 
 const generateAudio = async (text: string) => {
     try {
@@ -184,6 +198,10 @@ const handleNextCard = () => {
         ).then((value: any) => {
             cardList.value[currentCardIndex.value].exampleAI = value.response.text().replaceAll("\n\n", "\n")
         })
+    }
+
+    if (currentCardIndex.value + 1 < cardList.value.length) {
+        getQuestion(cardList.value[currentCardIndex.value + 1])
     }
 }
 

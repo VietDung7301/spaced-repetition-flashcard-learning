@@ -80,7 +80,7 @@ export interface VocabCardQuestion extends VocabCard {
     options: VocabQuestionOption[];
 }
 
-export interface GrammarCardQuestion extends VocabCard {
+export interface GrammarCardQuestion extends GrammarCard {
     options: GrammarQuestionOption[];
 }
 
