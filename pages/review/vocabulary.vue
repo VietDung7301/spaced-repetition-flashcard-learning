@@ -16,6 +16,8 @@ const audioUrl = ref<string | null>()
 const audioElement = ref<HTMLAudioElement>()
 const copiedAudioElement = ref<HTMLAudioElement>()
 
+const currentCard = ref<VocabCard>()
+
 let currentCardIndex = ref(0)
 let questionType = ref<VocabularyQuestionType>(randomEnum(VocabularyQuestionType))
 let userInput = ref('')
@@ -155,6 +157,8 @@ $fetch<VocabCardQuestion[]>(`/api/card/vocabulary/due?user_id=${user_id.value}`,
             currentOptionList.value = options
         })
 
+        currentCard.value = card
+
         if (currentCardIndex.value + 1 < cardList.value.length) {
             card = cardList.value[currentCardIndex.value + 1]
             getQuestion(card)
@@ -223,6 +227,8 @@ const handleNextCard = () => {
         })
     }
 
+    currentCard.value = cardList.value[currentCardIndex.value]
+
     generateWordAudio(cardList.value[currentCardIndex.value].word)
 
     if (currentCardIndex.value + 1 < cardList.value.length) {
@@ -251,6 +257,7 @@ const handleUpdateWord = async () => {
 		}
 	}).finally( () => {
 		toast.add({title: "Update word success"})
+        currentCard.value = state.currentEditingCard
         isEdit.value = false
     })
 }
@@ -320,10 +327,10 @@ onUnmounted(() => {
             <template #header>
                 <div v-if="questionType !== VocabularyQuestionType.WordToMeaningChose" 
                     class="text-xl whitespace-pre-wrap"
-                    v-html="cardList[currentCardIndex].meaning">
+                    v-html="currentCard?.meaning">
                 </div>
                 <div v-else class="text-xl whitespace-pre-wrap"
-                    v-html="cardList[currentCardIndex].word">
+                    v-html="currentCard?.word">
                 </div>
             </template>
 
@@ -389,11 +396,11 @@ onUnmounted(() => {
             <template #header>
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                  <div class="text-3xl text-green-800 dark:text-green-400 mb-2" v-html="cardList[currentCardIndex].word"></div>
+                  <div class="text-3xl text-green-800 dark:text-green-400 mb-2" v-html="currentCard?.word"></div>
                   <UButton v-if="audioUrl" icon="i-heroicons-speaker-wave" color="gray" variant="ghost" size="sm" class="mb-2" @click="playWordAudio" />
                 </div>
                 <div class="gap-4 flex">
-                    <UButton color="gray" icon="i-heroicons-pencil-square" @click="handleClickEdit(cardList[currentCardIndex])">
+                    <UButton color="gray" icon="i-heroicons-pencil-square" @click="currentCard && handleClickEdit(currentCard)">
                     </UButton>
                     <UButton icon="i-material-symbols:keyboard-double-arrow-right-rounded" @click="handleNextCard">
                         Next
@@ -404,18 +411,18 @@ onUnmounted(() => {
 
             <div class="overflow-y-auto h-64">
                 <div class="">
-                    <div class="text-xl" v-html="cardList[currentCardIndex].pronunciation"></div>
-                    <div class="text-xl whitespace-pre-wrap" v-html="cardList[currentCardIndex].meaning"></div>
+                    <div class="text-xl" v-html="currentCard?.pronunciation"></div>
+                    <div class="text-xl whitespace-pre-wrap" v-html="currentCard?.meaning"></div>
                 </div>
                 <UDivider class="h-4"/>
                 <div class="">
-                    <div v-if="cardList[currentCardIndex].example">
+                    <div v-if="currentCard?.example">
                         <div class="text-green-800 dark:text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> Example</div>
-                        <div class="whitespace-pre-wrap" v-html="cardList[currentCardIndex].example"></div>
+                        <div class="whitespace-pre-wrap" v-html="currentCard?.example"></div>
                     </div>
-                    <div v-if="cardList[currentCardIndex].exampleAI">
+                    <div v-if="currentCard?.exampleAI">
                         <div class="text-green-800 dark:text-green-400"><UIcon class="text-inherit" name="i-mdi:arrow-expand-right"/> AI generated example</div>
-                        <div class="whitespace-pre-wrap">{{cardList[currentCardIndex].exampleAI}}</div>
+                        <div class="whitespace-pre-wrap">{{currentCard?.exampleAI}}</div>
                     </div>
                 </div>
             </div>
