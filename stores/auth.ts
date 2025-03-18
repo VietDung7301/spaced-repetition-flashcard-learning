@@ -7,7 +7,8 @@ export const useAuthStore = defineStore('auth', {
       authenticated: false,
       user_id: 0,
       username: "",
-      userAvatar: ""
+      userAvatar: "",
+      speakerId: 0
     }
   },
   actions: {
@@ -19,11 +20,13 @@ export const useAuthStore = defineStore('auth', {
       this.user_id = user.id
       this.username = user.name
       this.userAvatar = user.imageURL
+      this.speakerId = user.speakerId
       storedUser.value = {
         id: user.id,
         email: user.email,
         imageURL: user.imageURL,
         name: user.name,
+        speakerId: user.speakerId
       }
     },
     logOut() {

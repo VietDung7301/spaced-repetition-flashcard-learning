@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { _backgroundColor } from '#tailwind-config/theme';
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { empty } from 'superstruct';
 import { randomEnum, type GrammarCardQuestion, type GrammarQuestionOption, type GrammarCard, GrammarQuestionType, type CardSet, SetType } from '~/types/type';
 
 const toast = useToast()
 const genAI = new GoogleGenerativeAI(useRuntimeConfig().public.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-const { user_id } = storeToRefs(useAuthStore());
-const speakerId = 13
+const { user_id, speakerId } = storeToRefs(useAuthStore());
 const voiceURL = useRuntimeConfig().public.VOICE_URL
 
 const cardList = ref()
@@ -91,7 +89,7 @@ $fetch<GrammarCardQuestion[]>(`/api/card/grammar/due?user_id=${user_id.value}`, 
 const generateAudio = async (text: string) => {
     try {
         // Step 1: Query the audio query endpoint
-        const queryResponse = await fetch(`${voiceURL}/audio_query?text=${encodeURIComponent(text)}&speaker=${speakerId}`, {
+        const queryResponse = await fetch(`${voiceURL}/audio_query?text=${encodeURIComponent(text)}&speaker=${speakerId.value}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -105,7 +103,7 @@ const generateAudio = async (text: string) => {
         const queryData = await queryResponse.json()
         
         // Step 2: Synthesize the audio
-        const synthesisResponse = await fetch(`${voiceURL}/synthesis?speaker=${speakerId}`, {
+        const synthesisResponse = await fetch(`${voiceURL}/synthesis?speaker=${speakerId.value}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

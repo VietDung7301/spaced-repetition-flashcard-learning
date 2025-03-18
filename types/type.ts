@@ -3,6 +3,7 @@ export interface User {
     name: string;
     email: string;
     imageURL: string;
+    speakerId: number;
 }
 
 export interface CardSet {
