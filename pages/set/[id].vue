@@ -81,9 +81,11 @@ const handleDeleteWord = (cardId:number) => {
     <div class="m-5 grid grid-cols-1 gap-4">
         <div v-for="card in cardList?.cards" class="flex flex-row">
             <UCard class="min-w-48 w-1/2 mr-2 min-h-36">
-                <div class="text-lg font-bold">{{ 'word' in card ? card.word : ('grammar' in card ? card.grammar : '') }}</div>
+                <div v-if="'word' in card" class="text-lg font-bold" v-html="card.word"></div>
+                <div v-else-if="'grammar' in card" class="text-lg font-bold" v-html="card.grammar"></div>
+                <div v-else-if="'kanji' in card" class="text-lg font-bold" v-html="card.kanji"></div>
                 <div class="flex flex-wrap justify-between">
-                    <div class="content-center">{{ card.meaning }}</div>
+                    <div class="content-center" v-html="card.meaning"></div>
                 </div>
             </UCard>
             <div class="w-24 mr-2 min-h-36 grid grid-col-2 justify-center">
@@ -112,30 +114,34 @@ const handleDeleteWord = (cardId:number) => {
                     value-attribute="id">
                 </USelect>
             </UFormGroup>
-            <UFormGroup v-if="'word' in state.currentEditingCard" label="Word" name="word">
-                <UInput v-model="state.currentEditingCard.word" class="mb-3" autocomplete="off" spellcheck="false"/>
-            </UFormGroup>
-            <UFormGroup v-if="'grammar' in state.currentEditingCard" label="Grammar" name="grammar">
-                <UInput v-model="state.currentEditingCard.grammar" class="mb-3" autocomplete="off" spellcheck="false"/>
-            </UFormGroup>
-            <UFormGroup v-if="'pronunciation' in state.currentEditingCard" label="Pronunciation" name="pronunciation">
-                <UInput v-model="state.currentEditingCard.pronunciation" class="mb-3" autocomplete="off" spellcheck="false"/>
-            </UFormGroup>
-            <UFormGroup v-if="'structure' in state.currentEditingCard" label="Structure" name="structure">
-                <!-- <UTextarea v-model="state.currentEditingCard.structure" class="mb-3" autocomplete="off" spellcheck="false"/> -->
-            </UFormGroup>
+            <label v-if="'word' in state.currentEditingCard" class="text-md font-semibold text-green-800 dark:text-green-600">Word</label>
+            <div v-if="'word' in state.currentEditingCard" class="mb-3">
+                <TiptapEditor v-model="state.currentEditingCard.word" class="mb-3" />
+            </div>
+            <label v-if="'grammar' in state.currentEditingCard" class="text-md font-semibold text-green-800 dark:text-green-600">Grammar</label>
+            <div v-if="'grammar' in state.currentEditingCard" class="mb-3">
+                <TiptapEditor v-model="state.currentEditingCard.grammar" class="mb-3" />
+            </div>
+            <label v-if="'pronunciation' in state.currentEditingCard" class="text-md font-semibold text-green-800 dark:text-green-600">Pronunciation</label>
+            <div v-if="'pronunciation' in state.currentEditingCard" class="mb-3">
+                <TiptapEditor v-model="state.currentEditingCard.pronunciation" class="mb-3" />
+            </div>
+            <label v-if="'structure' in state.currentEditingCard" class="text-md font-semibold text-green-800 dark:text-green-600">Structure</label>
             <div v-if="'structure' in state.currentEditingCard"class="mb-3">
                 <TiptapEditor v-model="state.currentEditingCard.structure" class="mb-3" />
             </div>
-            <UFormGroup label="Meaning" name="meaning">
-                <UTextarea v-model="state.currentEditingCard.meaning" class="mb-3" autocomplete="off" spellcheck="false"/>
-            </UFormGroup>
-            <UFormGroup v-if="'how_to_remember' in state.currentEditingCard" label="How to remember" name="how-to-remember" >
-                <UTextarea v-model="state.currentEditingCard.how_to_remember" class="mb-3" autocomplete="off" spellcheck="false"></UTextarea>
-            </UFormGroup>
-            <UFormGroup label="Example" name="example">
-                <UTextarea v-model="state.currentEditingCard.example" class="mb-3" autocomplete="off" spellcheck="false"/>
-            </UFormGroup>
+            <label v-if="'meaning' in state.currentEditingCard" class="text-md font-semibold text-green-800 dark:text-green-600">Meaning</label>
+            <div class="mb-3">
+                <TiptapEditor v-model="state.currentEditingCard.meaning" class="mb-3" />
+            </div>
+            <label v-if="'how_to_remember' in state.currentEditingCard" class="text-md font-semibold text-green-800 dark:text-green-600">How to remember</label>
+            <div v-if="'how_to_remember' in state.currentEditingCard" class="mb-3">
+                <TiptapEditor v-model="state.currentEditingCard.how_to_remember" class="mb-3" />
+            </div>
+            <label v-if="'example' in state.currentEditingCard" class="text-md font-semibold text-green-800 dark:text-green-600">Example</label>
+            <div class="mb-3">
+                <TiptapEditor v-model="state.currentEditingCard.example" class="mb-3" />
+            </div>
             <UButton icon="mingcute:check-circle-fill" type="submit" @click="handleUpdateWord">Submit</UButton>
         </div>
       </UCard>
