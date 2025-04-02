@@ -14,6 +14,7 @@ export default defineEventHandler( async(event) =>{
         const { word, pronunciation = "", meaning, example = "", set_id } = {...requestBody}
 
         const card: typeof vocabulariesTable.$inferInsert = {
+            repetitions: 1,
             word: word,
             pronunciation: pronunciation,
             meaning: meaning,
@@ -32,6 +33,7 @@ export default defineEventHandler( async(event) =>{
     } else if (type === SetType.grammar) {
         const { grammar, structure = "", meaning, example = "", set_id } = {...requestBody}
         const card: typeof grammarsTable.$inferInsert = {
+            repetitions: 1,
             grammar: grammar,
             meaning: meaning,
             example: example,
@@ -50,6 +52,7 @@ export default defineEventHandler( async(event) =>{
     } else if (type === SetType.kanji) {
         const { word, meaning, example = "", set_id, pronunciation="", how_to_remember=""} = {...requestBody}
         const card: typeof kanjisTable.$inferInsert = {
+            repetitions: 1,
             word: word,
             meaning: meaning,
             pronunciation: pronunciation,

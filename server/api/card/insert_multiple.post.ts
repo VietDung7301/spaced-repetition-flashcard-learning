@@ -14,6 +14,7 @@ export default defineEventHandler( async(event) =>{
             result = await db.insert(vocabulariesTable).values(
                 cards.map((card: string[]) => {
                     return {
+                        repetitions: 1,
                         word: card[0],
                         pronunciation: card[1],
                         meaning: card[2],
@@ -38,6 +39,7 @@ export default defineEventHandler( async(event) =>{
             result = await db.insert(grammarsTable).values(
                 cards.map((card: string[]) => {
                     return {
+                        repetitions: 1,
                         grammar: card[0],
                         structure: card[1],
                         meaning: card[2],
@@ -63,6 +65,7 @@ export default defineEventHandler( async(event) =>{
             result = await db.insert(kanjisTable).values(
                 cards.map((card: string[]) => {
                     return {
+                        repetitions: 1,
                         word: card[0],
                         pronunciation: card[1],
                         meaning: card[2],
