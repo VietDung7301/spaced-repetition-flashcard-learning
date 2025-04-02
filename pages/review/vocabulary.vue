@@ -173,10 +173,14 @@ $fetch<VocabCardQuestion[]>(`/api/card/vocabulary/due?user_id=${user_id.value}`,
 
 const handleSubmitAnswer = (isSubmit: boolean, event:any) => {
     event.target.blur();
+    const htmlString = cardList.value[currentCardIndex.value].word
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = htmlString;
+    const current_word = tempDiv.textContent;
     $fetch(`/api/card/${cardList.value[currentCardIndex.value].id}/learning_process`, {
         method: 'PUT',
         body: {
-            isCorrect: cardList.value[currentCardIndex.value].word === userInput.value && isSubmit === true,
+            isCorrect: current_word === userInput.value && isSubmit === true,
             interval: cardList.value[currentCardIndex.value].interval,
             ease_factor: cardList.value[currentCardIndex.value].ease_factor,
             repetitions: cardList.value[currentCardIndex.value].repetitions,
