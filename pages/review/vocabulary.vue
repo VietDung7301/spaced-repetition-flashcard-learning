@@ -91,7 +91,11 @@ const generateAudio = async (text: string) => {
 }
 
 const generateWordAudio = (word: string) => {
-    generateAudio(word).then((url: string | undefined) => {
+    const htmlString = word
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = htmlString;
+    const current_word = tempDiv.textContent || "";
+    generateAudio(current_word).then((url: string | undefined) => {
         if (url) {
             audioUrl.value = url
             audioElement.value = new Audio(url)
