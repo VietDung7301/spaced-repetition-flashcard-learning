@@ -85,7 +85,6 @@ const generateAudio = async (text: string) => {
         const audioBlob = await synthesisResponse.blob()
         return URL.createObjectURL(audioBlob)
     } catch (err:any) {
-        toast.add({title: "Error", description: err.message, color: 'red'})
         console.error('TTS Error:', err)
     }
 }
