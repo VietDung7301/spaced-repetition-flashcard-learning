@@ -26,9 +26,9 @@
     "@types/pg": "^8.11.10",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.0",
+    "hanzi-writer": "^3.7.2",
     "pg": "^8.13.1",
     "pinia": "^2.3.0",
-    "superstruct": "^2.0.2",
-    "vue-drawing-canvas": "^1.0.14"
+    "superstruct": "^2.0.2"
   }
 }
