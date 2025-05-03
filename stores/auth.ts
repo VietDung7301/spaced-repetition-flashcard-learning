@@ -8,7 +8,9 @@ export const useAuthStore = defineStore('auth', {
       user_id: 0,
       username: "",
       userAvatar: "",
-      speakerId: 0
+      speakerId: 0,
+      isVoiceOffline: false,
+      voiceUrl: useRuntimeConfig().public.VOICE_URL,
     }
   },
   actions: {
@@ -21,12 +23,15 @@ export const useAuthStore = defineStore('auth', {
       this.username = user.name
       this.userAvatar = user.imageURL
       this.speakerId = user.speakerId
+      this.isVoiceOffline = user.isVoiceOffline
+      this.voiceUrl = user.isVoiceOffline ? useRuntimeConfig().public.OFFLINE_VOICE_URL : useRuntimeConfig().public.VOICE_URL
       storedUser.value = {
         id: user.id,
         email: user.email,
         imageURL: user.imageURL,
         name: user.name,
-        speakerId: user.speakerId
+        speakerId: user.speakerId,
+        isVoiceOffline: user.isVoiceOffline,
       }
     },
     logOut() {
@@ -38,5 +43,11 @@ export const useAuthStore = defineStore('auth', {
       this.userAvatar = ""
       user.value = null
     },
+    changeVoiceUrl() {
+      const user = useCookie<User>('user');
+      this.isVoiceOffline = !this.isVoiceOffline
+      this.voiceUrl = this.isVoiceOffline ? useRuntimeConfig().public.OFFLINE_VOICE_URL : useRuntimeConfig().public.VOICE_URL
+      user.value.isVoiceOffline = this.isVoiceOffline
+    }
   }
 });

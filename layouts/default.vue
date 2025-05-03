@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const { userAvatar } = storeToRefs(useAuthStore())
+const { userAvatar, isVoiceOffline } = storeToRefs(useAuthStore())
+const { changeVoiceUrl } = useAuthStore()
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 const colorMode = useColorMode()
 
@@ -63,6 +64,15 @@ const navigation = [
           </div>
         </div>
         <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+          <!-- Voice button -->
+          <UButton
+            :icon="isVoiceOffline ? 'i-famicons:cloud-offline-outline' : 'i-famicons:cloud-done'"
+            color="gray"
+            variant="ghost"
+            aria-label="Voice"
+            @click="changeVoiceUrl()"
+            class="size-8"
+          />
           <UButton
             :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'"
             color="gray"

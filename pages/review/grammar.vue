@@ -6,8 +6,7 @@ import { randomEnum, type GrammarCardQuestion, type GrammarQuestionOption, type 
 const toast = useToast()
 const genAI = new GoogleGenerativeAI(useRuntimeConfig().public.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-const { user_id, speakerId } = storeToRefs(useAuthStore());
-const voiceURL = useRuntimeConfig().public.VOICE_URL
+const { user_id, speakerId, voiceUrl } = storeToRefs(useAuthStore());
 
 const cardList = ref()
 const currentOptionList = ref<GrammarQuestionOption[]>()
@@ -93,7 +92,7 @@ $fetch<GrammarCardQuestion[]>(`/api/card/grammar/due?user_id=${user_id.value}`, 
 const generateAudio = async (text: string) => {
     try {
         // Step 1: Query the audio query endpoint
-        const queryResponse = await fetch(`${voiceURL}/audio_query?text=${encodeURIComponent(text)}&speaker=${speakerId.value}`, {
+        const queryResponse = await fetch(`${voiceUrl.value}/audio_query?text=${encodeURIComponent(text)}&speaker=${speakerId.value}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -107,7 +106,7 @@ const generateAudio = async (text: string) => {
         const queryData = await queryResponse.json()
         
         // Step 2: Synthesize the audio
-        const synthesisResponse = await fetch(`${voiceURL}/synthesis?speaker=${speakerId.value}`, {
+        const synthesisResponse = await fetch(`${voiceUrl.value}/synthesis?speaker=${speakerId.value}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

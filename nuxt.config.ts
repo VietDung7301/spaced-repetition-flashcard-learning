@@ -14,6 +14,7 @@ export default defineNuxtConfig({
     public: {
       GEMINI_API_KEY: process.env.GEMINI_API_KEY,
       VOICE_URL: process.env.VOICE_URL,
+      OFFLINE_VOICE_URL: process.env.OFFLINE_VOICE_URL,
     }
   },
 

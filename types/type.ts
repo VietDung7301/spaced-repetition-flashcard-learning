@@ -4,6 +4,7 @@ export interface User {
     email: string;
     imageURL: string;
     speakerId: number;
+    isVoiceOffline: boolean;
 }
 
 export interface CardSet {
